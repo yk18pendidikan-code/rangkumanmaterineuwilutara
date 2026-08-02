@@ -1,0 +1,3475 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sistem Rangkuman Materi Belajar dan Monitoring Harian Jumlah Siswa</title>
+<link rel="icon" type="image/png" href="LOGO%20YK18.png">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+
+  <style>
+    *{
+        margin:0;
+        padding:0;
+        box-sizing:border-box;
+        font-family:'Poppins',sans-serif;
+    }
+    body{
+        background:#f3f5f9;
+        color:#333;
+    }
+    a{
+        text-decoration:none;
+    }
+    button{
+        cursor:pointer;
+        border:none;
+    }
+    input, select, textarea{
+        width:100%;
+        padding:12px 15px;
+        border-radius:10px;
+        border:1px solid #ddd;
+        outline:none;
+        transition:.3s;
+        font-size:15px;
+    }
+    input:focus, select:focus, textarea:focus{
+        border-color:#d60000;
+        box-shadow:0 0 10px rgba(214,0,0,.2);
+    }
+    textarea{
+        resize:vertical;
+    }
+    .navbar{
+        width:100%;
+        background:#d60000;
+        color:#fff;
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        padding:15px 40px;
+        position:sticky;
+        top:0;
+        z-index:999;
+        box-shadow:0 5px 20px rgba(0,0,0,.15);
+    }
+    .logo-area{
+        display:flex;
+        align-items:center;
+        gap:15px;
+    }
+    .logo{
+        width:55px;
+        height:55px;
+        border-radius:50%;
+        background:#fff;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        overflow:hidden;
+    }
+    .logo-area h2{
+        font-size:20px;
+        color: white;
+    }
+    .cabang-badge{
+        background:rgba(255,255,255,.18);
+        color:#fff;
+        padding:8px 14px;
+        border-radius:10px;
+        font-size:13px;
+        font-weight:600;
+        display:flex;
+        align-items:center;
+        gap:8px;
+        white-space:nowrap;
+    }
+    .login-btn{
+        background:#fff;
+        color:#d60000;
+        padding:12px 20px;
+        border-radius:10px;
+        font-weight:600;
+        transition:.3s;
+    }
+    .login-btn:hover{
+        transform:translateY(-3px);
+    }
+    .hero{
+        padding:80px;
+        text-align:center;
+        background:linear-gradient(135deg,#d60000,#ff4d4d);
+        color:white;
+      margin-bottom:20px;
+    }
+    .hero h1{
+        font-size:42px;
+        margin-bottom:10px;
+    }
+    .hero p{
+        font-size:20px;
+    }
+    .filter-area{
+        width:95%;
+        margin:auto;
+        margin-top:-40px;
+    }
+    .card{
+        background:white;
+        border-radius:20px;
+        padding:25px;
+        box-shadow:0 10px 25px rgba(0,0,0,.08);
+    }
+    .card h3{
+        margin-bottom:20px;
+        color:#d60000;
+    }
+    .filter-grid{
+        display:grid;
+        grid-template-columns:repeat(4,1fr);
+        gap:20px;
+    }
+    .btn-primary{
+        background:#d60000;
+        color:white;
+        padding:12px;
+        border-radius:10px;
+        font-weight:600;
+        transition:.3s;
+    }
+    .btn-primary:hover{
+        background:#b60000;
+    }
+    .statistik{
+        width:95%;
+        margin:30px auto;
+        display:grid;
+        grid-template-columns:repeat(3,1fr);
+        gap:25px;
+    }
+    .stat-card{
+        background:white;
+        border-radius:20px;
+        padding:30px;
+        text-align:center;
+        box-shadow:0 8px 20px rgba(0,0,0,.08);
+        transition:.3s;
+    }
+    .stat-card:hover{
+        transform:translateY(-5px);
+    }
+    .stat-card i{
+        font-size:35px;
+        color:#d60000;
+        margin-bottom:15px;
+    }
+    .stat-card h2{
+        font-size:35px;
+        margin-bottom:10px;
+    }
+    .table-area{
+        width:95%;
+        margin:auto;
+        margin-bottom:40px;
+    }
+    .table-header-flex {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+    .table-header-flex h3 {
+        margin-bottom: 0 !important;
+    }
+    /* Khusus header Checklist Pembahasan Try Out Bulanan: tombol/filter SELALU
+       ditampilkan di BAWAH judul (bukan di sampingnya), baik di desktop maupun mobile. */
+    .checklist-header-stack{
+        flex-direction:column;
+        align-items:flex-start;
+        gap:14px;
+    }
+    .checklist-header-stack .header-actions{
+        width:100%;
+    }
+    .entries-control {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+        color: #555;
+        flex-wrap: wrap;
+    }
+    .entries-control select {
+        width: auto;
+        padding: 6px 10px;
+        border-radius: 8px;
+    }
+    .header-actions{
+        display:flex;
+        align-items:center;
+        gap:14px;
+        flex-wrap:wrap;
+    }
+    .btn-export{
+        background:#d60000;
+        color:#fff;
+        padding:10px 18px;
+        border-radius:10px;
+        font-weight:600;
+        font-size:14px;
+        display:flex;
+        align-items:center;
+        gap:8px;
+        transition:.3s;
+        white-space:nowrap;
+    }
+    .btn-export:hover{
+        background:#b60000;
+        transform:translateY(-2px);
+    }
+    .btn-export:disabled{
+        opacity:.6;
+        cursor:not-allowed;
+        transform:none;
+    }
+    .table-responsive{
+        overflow:auto;
+    }
+    table{
+        width:100%;
+        border-collapse:collapse;
+    }
+    thead{
+        background:#d60000;
+        color:white;
+    }
+    th, td{
+        padding:14px;
+        text-align:center;
+    }
+    td{
+        border-bottom:1px solid #eee;
+    }
+    .modal{
+        position:fixed;
+        width:100%;
+        height:100%;
+        left:0;
+        top:0;
+        background:rgba(0,0,0,.55);
+        backdrop-filter:blur(4px);
+        -webkit-backdrop-filter:blur(4px);
+        display:none;
+        justify-content:center;
+        align-items:center;
+        z-index:9999;
+        padding:20px;
+    }
+    .modal-content{
+        width:420px;
+        background:white;
+        border-radius:18px;
+        overflow:hidden;
+        animation:popup .3s;
+    }
+    @keyframes popup{
+        from{ transform:scale(.8); opacity:0; }
+        to{ transform:scale(1); opacity:1; }
+    }
+    .modal-header{
+        background:#d60000;
+        color:white;
+        padding:18px;
+        display:flex;
+        justify-content:space-between;
+    }
+    .close{
+        cursor:pointer;
+        font-size:22px;
+    }
+    .modal-body{
+        padding:25px;
+    }
+    .modal-body label{
+        display:block;
+        margin-top:15px;
+        margin-bottom:8px;
+    }
+    .full{
+        width:100%;
+        margin-top:25px;
+    }
+    .modal-content.admin-modal-content{
+        max-width:640px;
+    }
+    .admin-modal-content .modal-body{
+        padding:25px;
+    }
+    .form-grid{
+        display:grid;
+        grid-template-columns:repeat(2,1fr);
+        gap:20px;
+        margin-bottom:20px;
+    }
+    .button-area{
+        display:flex;
+        gap:15px;
+        margin-top:20px;
+    }
+    .btn-danger{
+        background:#555;
+        color:white;
+        padding:12px 18px;
+        border-radius:10px;
+    }
+    .btn-danger:hover{
+        background:black;
+    }
+    .badge{
+        display:inline-block;
+        padding:6px 14px;
+        border-radius:30px;
+        font-size:13px;
+        font-weight:600;
+    }
+    .badge-kelas{
+        background:#f3f5f9;
+        color:#555;
+        border:1px solid #ddd;
+    }
+    .btn-warning{
+        background:#ffc107;
+        color:#000;
+        padding:6px 12px;
+        border-radius:8px;
+    }
+    .btn-delete{
+        background:#dc3545;
+        color:#fff;
+        padding:6px 12px;
+        border-radius:8px;
+    }
+    .action{
+        display:flex;
+        gap:8px;
+        justify-content:center;
+    }
+    .loading{
+        position:fixed;
+        left:0;
+        top:0;
+        width:100%;
+        height:100%;
+        background:rgba(255,255,255,.85);
+        display:none;
+        justify-content:center;
+        align-items:center;
+        z-index:99999;
+    }
+    .loader{
+        width:65px;
+        height:65px;
+        border:7px solid #ddd;
+        border-top:7px solid #d60000;
+        border-radius:50%;
+        animation:spin 1s linear infinite;
+    }
+    @keyframes spin{
+        0%{ transform:rotate(0deg); }
+        100%{ transform:rotate(360deg); }
+    }
+
+    /* ============ SKELETON LOADING ============ */
+    .skeleton{
+        background:linear-gradient(90deg, #eef0f4 25%, #e4e7ee 37%, #eef0f4 63%);
+        background-size:400% 100%;
+        animation:skeleton-shimmer 1.4s ease infinite;
+        border-radius:8px;
+    }
+    @keyframes skeleton-shimmer{
+        0%{ background-position:100% 50%; }
+        100%{ background-position:0 50%; }
+    }
+    .skeleton-text{
+        height:14px;
+        margin:6px 0;
+    }
+    .skeleton-badge{
+        height:24px;
+        width:70px;
+        border-radius:30px;
+        display:inline-block;
+    }
+    .skeleton-stat-number{
+        width:80px;
+        height:34px;
+        display:inline-block;
+        vertical-align:middle;
+    }
+    .skeleton-checklist-card{
+        background:#fafbfc;
+        border:1px solid #ececec;
+        border-radius:16px;
+        padding:20px;
+    }
+    .skeleton-checklist-card .skeleton-text{ width:45%; height:16px; }
+    .skeleton-checklist-card .skeleton-bar{ height:9px; margin:14px 0 18px; }
+    .skeleton-mon-bar{
+        height:20px;
+        width:100%;
+    }
+
+    footer{
+        background:#d60000;
+        color:white;
+        text-align:center;
+        padding:25px;
+        margin-top:50px;
+    }
+    .table-hint{ display:none; }
+    img{ max-width:100%; }
+
+    /* ============ SEARCHABLE SELECT (Choices.js) ============ */
+    .choices{
+        margin-bottom:0;
+        font-size:15px;
+    }
+    .choices__inner{
+        background:#fff;
+        border:1px solid #ddd;
+        border-radius:10px;
+        padding:9px 10px 6px;
+        min-height:48px;
+    }
+    .choices.is-open .choices__inner,
+    .choices.is-focused .choices__inner{
+        border-color:#d60000;
+        box-shadow:0 0 10px rgba(214,0,0,.2);
+    }
+    .choices__list--dropdown, .choices__list[aria-expanded]{
+        border-color:#d60000;
+        border-radius:10px;
+        overflow:hidden;
+        z-index:50;
+    }
+    .choices__list--dropdown .choices__input{
+        border-radius:0;
+        margin:0;
+        border-bottom:1px solid #eee;
+    }
+    .choices__list--dropdown .choices__item--selectable.is-highlighted{
+        background:#d60000;
+        color:#fff;
+    }
+    .choices__list--dropdown .choices__group .choices__heading{
+        color:#d60000;
+        font-weight:700;
+    }
+    .choices[data-type*="select-one"] .choices__inner{
+        padding-bottom:9px;
+    }
+    .choices[data-type*="select-one"]::after{
+        border-color:#d60000 transparent transparent transparent;
+    }
+    .choices__list--single .choices__item,
+    .choices__list--dropdown .choices__item,
+    .choices__list[role="listbox"] .choices__item{
+        color:#222 !important;
+    }
+    .choices__list--dropdown .choices__item--selectable.is-highlighted{
+        color:#fff !important;
+    }
+    .choices__list--dropdown .choices__placeholder,
+    .choices__list--single .choices__placeholder{
+        color:#888 !important;
+        opacity:1 !important;
+    }
+    .choices__input{
+        color:#222 !important;
+        background:#fff !important;
+    }
+    .choices__item--disabled{
+        color:#aaa !important;
+    }
+    .choices__list--dropdown .choices__item--selectable.is-selected,
+    .choices__list--dropdown .choices__item--selectable[aria-selected="true"]{
+        background:#ffe1e1 !important;
+        color:#b60000 !important;
+        font-weight:600;
+        opacity:1 !important;
+    }
+    .choices__list--dropdown .choices__item--selectable{
+        background:#fff;
+        opacity:1 !important;
+    }
+    .entries-control .choices{
+        min-width:190px;
+        flex:0 1 auto;
+    }
+    .entries-control .choices .choices__list--dropdown{
+        min-width:220px;
+        white-space:normal;
+    }
+    .choices__list--dropdown .choices__item,
+    .choices__list[role="listbox"] .choices__item{
+        white-space:normal;
+        word-break:break-word;
+    }
+
+    #navbarSpacer{
+        display:none;
+        width:100%;
+    }
+
+    .modal-content{
+        width:92%;
+        max-width:420px;
+        margin:0 16px;
+        max-height:90vh;
+        overflow-y:auto;
+    }
+
+    /* ============ PAGINASI ============ */
+    .pagination-area{
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        flex-wrap:wrap;
+        gap:12px;
+        margin-top:20px;
+        padding-top:15px;
+        border-top:1px solid #eee;
+    }
+    .pagination-info{
+        font-size:14px;
+        color:#666;
+    }
+    .pagination-btns{
+        display:flex;
+        gap:10px;
+        align-items:center;
+    }
+    .btn-page{
+        background:#fff;
+        color:#d60000;
+        border:1.5px solid #d60000;
+        padding:9px 18px;
+        border-radius:8px;
+        font-weight:600;
+        font-size:14px;
+        display:flex;
+        align-items:center;
+        gap:6px;
+        transition:.2s;
+    }
+    .btn-page:hover:not(:disabled){
+        background:#d60000;
+        color:#fff;
+    }
+    .btn-page:disabled{
+        opacity:.4;
+        cursor:not-allowed;
+    }
+    .page-indicator{
+        font-size:14px;
+        font-weight:600;
+        color:#333;
+        background:#f3f5f9;
+        padding:8px 14px;
+        border-radius:8px;
+        white-space:nowrap;
+    }
+
+    /* ============ CHECKLIST PEMBAHASAN TRY OUT BULANAN ============ */
+    .checklist-info{
+        display:flex;
+        align-items:flex-start;
+        gap:10px;
+        background:#fbf6e9;
+        border:1px solid #f0e2b6;
+        color:#8a6d00;
+        border-radius:12px;
+        padding:14px 16px;
+        font-size:13px;
+        line-height:1.6;
+        margin-bottom:22px;
+    }
+    .checklist-info i{
+        margin-top:2px;
+        font-size:15px;
+    }
+    .checklist-grid{
+        display:grid;
+        grid-template-columns:repeat(auto-fit,minmax(290px,1fr));
+        gap:20px;
+    }
+    .checklist-card{
+        background:#fafbfc;
+        border:1px solid #ececec;
+        border-radius:16px;
+        padding:20px;
+    }
+    .checklist-card-header{
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        gap:10px;
+        margin-bottom:14px;
+    }
+    .checklist-card-header h4{
+        font-size:16px;
+        color:#222;
+    }
+    .checklist-jenis-tag{
+        font-size:11px;
+        font-weight:700;
+        letter-spacing:.3px;
+        padding:5px 12px;
+        border-radius:20px;
+        background:#eef1f7;
+        color:#555;
+        white-space:nowrap;
+    }
+    .checklist-progress-bar{
+        width:100%;
+        height:9px;
+        background:#e9ecef;
+        border-radius:10px;
+        overflow:hidden;
+        margin-bottom:8px;
+    }
+    .checklist-progress-fill{
+        height:100%;
+        background:linear-gradient(90deg,#28a745,#5cd576);
+        border-radius:10px;
+        transition:width .4s ease;
+    }
+    .checklist-progress-text{
+        font-size:12.5px;
+        font-weight:600;
+        color:#666;
+        margin-bottom:14px;
+    }
+    .checklist-item{
+        display:flex;
+        justify-content:space-between;
+        align-items:flex-start;
+        gap:10px;
+        padding:11px 0;
+        border-bottom:1px dashed #e3e3e3;
+    }
+    .checklist-item:last-child{
+        border-bottom:none;
+        padding-bottom:0;
+    }
+    .checklist-item-nama{
+        font-size:13.5px;
+        font-weight:600;
+        color:#333;
+    }
+    .checklist-item-info{
+        font-size:11.5px;
+        color:#909090;
+        margin-top:3px;
+    }
+    .checklist-status{
+        display:flex;
+        align-items:center;
+        gap:6px;
+        font-size:11.5px;
+        font-weight:700;
+        padding:5px 11px;
+        border-radius:20px;
+        white-space:nowrap;
+    }
+    .checklist-status.sudah{
+        background:#e6f8ec;
+        color:#1e8a44;
+    }
+    .checklist-status.belum{
+        background:#fdeaea;
+        color:#c0392b;
+    }
+    .checklist-empty-state{
+        grid-column:1/-1;
+        text-align:center;
+        padding:35px 15px;
+        color:#888;
+        background:#fafbfc;
+        border:1.5px dashed #ddd;
+        border-radius:16px;
+    }
+    .checklist-empty-state i{
+        font-size:28px;
+        margin-bottom:12px;
+        display:block;
+        color:#d60000;
+    }
+
+    /* ============ TABEL MONITORING (MATRIKS BULANAN) ============ */
+    #monitoringTable{
+        min-width:1500px;
+        border-collapse:collapse;
+    }
+    #monitoringTable th, #monitoringTable td{
+        border:1px solid #e2e2e2;
+        text-align:center;
+        padding:8px 10px;
+        font-size:13px;
+        white-space:nowrap;
+    }
+    #monitoringTable thead th{
+        background:#d60000;
+        color:#fff;
+        position:sticky;
+        top:0;
+        z-index:2;
+    }
+    #monitoringTable tbody td:nth-child(2),
+    #monitoringTable tbody td:nth-child(3){
+        white-space:normal;
+    }
+    #monitoringTable tbody tr:nth-child(even){
+        background:#fafafa;
+    }
+    #monitoringTable tbody tr.baris-total td{
+        background:#f3f5f9;
+        border-top:2px solid #d60000;
+        font-weight:700;
+    }
+    .input-jumlah-siswa{
+        width:72px;
+        padding:6px 8px;
+        text-align:center;
+        margin:0 auto;
+        font-size:13px;
+    }
+    #monitoringTable td.sel-hadir{
+        white-space:normal;
+        min-width:78px;
+    }
+    #monitoringTable .kolom-kelas-mon{
+        min-width:90px;
+        white-space:normal;
+    }
+    .angka-hadir{
+        font-weight:600;
+        font-size:13px;
+    }
+    .mapel-hadir-wrap{
+        display:flex;
+        flex-wrap:wrap;
+        justify-content:center;
+        gap:3px;
+        margin-top:4px;
+    }
+    .badge-mapel-kecil{
+        display:inline-block;
+        padding:2px 6px;
+        border-radius:8px;
+        font-size:10px;
+        font-weight:700;
+        line-height:1.4;
+        white-space:nowrap;
+    }
+
+    /* ============ REKAP BULANAN JUMLAH SISWA ============ */
+    #rekapTable{
+        min-width:900px;
+        border-collapse:collapse;
+    }
+    #rekapTable th, #rekapTable td{
+        border:1px solid #e2e2e2;
+        text-align:center;
+        padding:9px 10px;
+        font-size:13px;
+    }
+    #rekapTable thead th{
+        background:#d60000;
+        color:#fff;
+        position:sticky;
+        top:0;
+        z-index:2;
+    }
+    #rekapTable tbody tr:nth-child(even){
+        background:#fafafa;
+    }
+    #rekapTable tbody tr.baris-total td{
+        background:#f3f5f9;
+        border-top:2px solid #d60000;
+        font-weight:700;
+    }
+    #rekapTable td.kolom-kelas-rekap{
+        text-align:left;
+        font-weight:600;
+        min-width:120px;
+        white-space:normal;
+    }
+    .rekap-kosong{
+        color:#c3c3c3;
+    }
+
+    /* ============ PILIH CABANG (WAJIB dipilih sebelum data tampil) ============ */
+    .cabang-area{
+        width:95%;
+        margin:auto;
+        margin-top:-40px;
+        margin-bottom:20px;
+    }
+    .cabang-card{
+        background:white;
+        border-radius:20px;
+        padding:20px 25px;
+        box-shadow:0 10px 25px rgba(0,0,0,.08);
+        display:flex;
+        align-items:center;
+        gap:18px;
+        flex-wrap:wrap;
+    }
+    .cabang-card label{
+        font-weight:700;
+        color:#d60000;
+        white-space:nowrap;
+        display:flex;
+        align-items:center;
+        gap:8px;
+    }
+    .cabang-card .cabang-select-wrap{
+        flex:1;
+        min-width:220px;
+    }
+    .cabang-locked-note{
+        font-size:12.5px;
+        color:#888;
+    }
+    .konten-butuh-cabang{
+        display:none;
+    }
+    .placeholder-pilih-cabang{
+        text-align:center;
+        padding:40px 20px;
+        color:#888;
+    }
+    .placeholder-pilih-cabang i{
+        font-size:30px;
+        color:#d60000;
+        margin-bottom:12px;
+        display:block;
+    }
+
+    /* ============ TABLET & MOBILE (<=768px) ============ */
+    @media(max-width:768px){
+        html, body{ overflow-x:hidden; }
+
+        .filter-grid, .form-grid{ grid-template-columns:1fr; }
+        .statistik{ grid-template-columns:1fr; }
+        .navbar{
+            flex-direction:column;
+            gap:12px;
+            padding:15px 20px;
+            width:100%;
+            max-width:100vw;
+            overflow-x:hidden;
+            box-sizing:border-box;
+            position:fixed;
+            top:0;
+            left:0;
+            right:0;
+            z-index:1000;
+        }
+        .navbar > div{
+            width:100%;
+            justify-content:center;
+            flex-wrap:wrap;
+            max-width:100%;
+            box-sizing:border-box;
+        }
+        .navbar .login-btn{
+            white-space:nowrap;
+            font-size:13px;
+            padding:10px 14px;
+        }
+        #navbarSpacer{
+            display:block;
+        }
+        .table-header-flex { flex-direction: column; align-items: flex-start; gap: 10px;}
+
+        .hero{ padding:40px 20px; }
+        .hero h1{ font-size:30px; }
+        .hero p{ font-size:16px; }
+
+        .card{ padding:18px; }
+
+        .button-area{ flex-direction:column; }
+        .button-area button{ width:100%; }
+
+        .pagination-area{ flex-direction:column; align-items:stretch; }
+        .pagination-btns{ justify-content:space-between; }
+        .btn-page{ flex:1; justify-content:center; }
+
+        .checklist-grid{ grid-template-columns:1fr; }
+
+        .table-hint{
+            display:flex;
+            align-items:center;
+            gap:6px;
+            font-size:12.5px;
+            color:#999;
+            margin-bottom:10px;
+        }
+        .table-responsive{
+            overflow-x:auto;
+            -webkit-overflow-scrolling:touch;
+            border-radius:14px;
+            border:1px solid #eee;
+        }
+        #dataTable{
+            min-width:920px;
+            table-layout:auto;
+        }
+        #dataTable th, #dataTable td{
+            padding:12px 14px;
+            font-size:13px;
+            line-height:1.5;
+            white-space:normal;
+            overflow-wrap:normal;
+            word-break:normal;
+        }
+        #dataTable th:nth-child(1), #dataTable td:nth-child(1){ min-width:40px; }
+        #dataTable th:nth-child(2), #dataTable td:nth-child(2){ min-width:140px; }
+        #dataTable th:nth-child(3), #dataTable td:nth-child(3){ min-width:90px; }
+        #dataTable th:nth-child(4), #dataTable td:nth-child(4){ min-width:130px; white-space:nowrap; }
+        #dataTable th:nth-child(5), #dataTable td:nth-child(5){ min-width:170px; }
+        #dataTable td[data-label="Materi"], #dataTable th:nth-child(6){
+            min-width:260px;
+            text-align:left;
+        }
+        #dataTable th:nth-child(7), #dataTable td:nth-child(7){ min-width:90px; white-space:nowrap; }
+        #dataTable th.kolom-admin, #dataTable td.kolom-admin{ min-width:110px; }
+        #dataTable .badge{ white-space:nowrap; }
+        #dataTable .action{ gap:8px; }
+
+        #monitoringTable th, #monitoringTable td{
+            padding:10px 12px;
+            font-size:12.5px;
+        }
+
+        .cabang-card{ flex-direction:column; align-items:stretch; }
+    }
+
+    /* ============ HP KECIL (<=480px) ============ */
+    @media(max-width:480px){
+        .navbar{ padding:12px 15px; }
+        .logo{ width:44px; height:44px; }
+        .logo-area h2{ font-size:16px; }
+        .login-btn{ padding:9px 14px; font-size:13px; white-space:nowrap; }
+
+        .hero{ padding:30px 15px; }
+        .hero h1{ font-size:24px; }
+        .hero p{ font-size:14px; }
+
+        .card h3{ font-size:16px; }
+        .card{ padding:15px; }
+
+        .stat-card{ padding:20px; }
+        .stat-card i{ font-size:28px; }
+        .stat-card h2{ font-size:26px; }
+
+        .badge{ font-size:12px; padding:5px 10px; }
+        input, select, textarea{ font-size:14px; padding:10px 12px; }
+
+        .btn-page{ padding:9px 10px; font-size:13px; }
+        .page-indicator{ font-size:13px; padding:7px 10px; }
+    }
+  </style>
+</head>
+
+<body>
+
+<div id="loading" class="loading">
+  <div class="loader"></div>
+</div>
+
+<nav class="navbar">
+  <div class="logo-area">
+    <div class="logo">
+     <img src="LOGO%20YK18.png" alt="Logo YK18" style="width: 100%; height: auto; border-radius: 50%;">
+    </div>
+    <h2>Neutron Murangan</h2>
+  </div>
+  <div style="display:flex;gap:12px;align-items:center;">
+    <span class="cabang-badge" id="cabangBadge" style="display:none;">
+      <i class="fa-solid fa-building"></i> <span id="cabangBadgeNama">-</span>
+    </span>
+    <button class="login-btn" id="btnLoginLogout" onclick="openLogin()">
+      <i class="fa fa-user-lock"></i> Login Admin
+    </button>
+  </div>
+</nav>
+<div id="navbarSpacer"></div>
+
+<div id="halamanUtama">
+  <header class="hero">
+    <p>Selamat Datang! 👋</p>
+    <p>Mulailah menjelajahi berbagai fitur yang telah kami sediakan untuk mendukung perjalanan belajarmu.
+      Semoga pengalamanmu bersama Neutron Murangan menyenangkan dan bermanfaat.</p>
+  </header>
+
+  <section class="cabang-area">
+    <div class="card cabang-card">
+      <label><i class="fa-solid fa-building"></i> Pilih Cabang</label>
+      <div class="cabang-select-wrap">
+        <select id="pilihCabang" onchange="gantiCabang()">
+          <option value="" disabled selected>-- Pilih Cabang --</option>
+        </select>
+      </div>
+      <span class="cabang-locked-note" id="catatanCabangTerkunci" style="display:none;">
+        <i class="fa fa-lock"></i> Akun Anda hanya bisa mengelola cabang ini.
+      </span>
+    </div>
+  </section>
+
+  <div id="placeholderPilihCabang" class="placeholder-pilih-cabang">
+    <i class="fa-solid fa-hand-pointer"></i>
+    Silakan pilih <b>Cabang</b> terlebih dahulu di atas untuk menampilkan seluruh data.
+  </div>
+
+  <div id="kontenCabang" class="konten-butuh-cabang">
+
+  <section class="filter-area">
+    <div class="card">
+      <h3><i class="fa fa-filter"></i> Filter Data</h3>
+      <div class="filter-grid">
+        <div>
+          <label>Kelas</label>
+          <select id="kelas" onchange="terapkanFilter()">
+            <option value="">Semua Kelas</option>
+          </select>
+        </div>
+        <div>
+          <label>Mata Pelajaran</label>
+          <select id="mapel" onchange="terapkanFilter()">
+            <option value="">Semua Mata Pelajaran</option>
+          </select>
+        </div>
+        <div class="search-box">
+          <label>Cari Materi</label>
+          <input type="text" id="search" placeholder="Cari materi..." oninput="terapkanFilter()">
+        </div>
+        <div>
+          <label>&nbsp;</label>
+          <button class="btn-primary" onclick="terapkanFilter()">
+            <i class="fa fa-search"></i> Filter
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="statistik">
+    <div class="stat-card">
+      <i class="fa-solid fa-book"></i>
+      <h2 id="jumlahMateri">0</h2>
+      <p>Total Materi</p>
+    </div>
+    <div class="stat-card">
+      <i class="fa-solid fa-users"></i>
+      <h2 id="jumlahSiswa">0</h2>
+      <p>Total Kehadiran</p>
+    </div>
+    <div class="stat-card">
+      <i class="fa-solid fa-user-tie"></i>
+      <h2 id="jumlahTentor">0</h2>
+      <p>Total Tentor</p>
+    </div>
+  </section>
+
+  <section class="table-area">
+    <div class="card">
+      <div class="table-header-flex">
+        <h3><i class="fa fa-table"></i> Data Rangkuman Materi</h3>
+        <div class="header-actions">
+          <div class="entries-control">
+            <span>Tampilkan</span>
+            <select id="maxEntries" onchange="resetHalamanDanFilter()">
+              <option value="10">10</option>
+              <option value="25">25</option>
+              <option value="100">100</option>
+              <option value="all">Semua</option>
+            </select>
+            <span>data</span>
+          </div>
+          <button class="btn-export" id="btnTambahData" style="display:none;" onclick="tampilkanAdminPanel()">
+            <i class="fa fa-plus"></i> Tambah Data Rangkuman Materi
+          </button>
+        </div>
+      </div>
+      <div class="header-actions" style="margin-bottom:20px;">
+        <button class="btn-export" id="btnExportDataPdf" onclick="exportDataTablePdf()">
+          <i class="fa-solid fa-file-pdf"></i> Ekspor PDF
+        </button>
+      </div>
+      <p class="table-hint"><i class="fa fa-arrows-left-right"></i> Geser tabel ke kanan untuk melihat kolom lainnya</p>
+      <div class="table-responsive">
+        <table id="dataTable">
+          <thead>
+            <tr>
+              <th>No</th>
+              <th>Mapel</th>
+              <th>Kelas</th>
+              <th>Hari, Tanggal</th>
+              <th>Tentor</th>
+              <th>Materi</th>
+              <th>Hadir</th>
+              <th class="kolom-admin" style="display:none;">Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="tbody">
+            <tr>
+              <td colspan="8">Memuat data...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="pagination-area" id="paginationArea" style="display:none;">
+        <div class="pagination-info" id="infoHalaman">Halaman 1 dari 1</div>
+        <div class="pagination-btns">
+          <button class="btn-page" id="btnPrev" onclick="halamanSebelumnya()">
+            <i class="fa fa-chevron-left"></i> Sebelumnya
+          </button>
+          <span class="page-indicator" id="indikatorHalaman">1 / 1</span>
+          <button class="btn-page" id="btnNext" onclick="halamanBerikutnya()">
+            Berikutnya <i class="fa fa-chevron-right"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="table-area">
+    <div class="card">
+      <div class="table-header-flex checklist-header-stack">
+        <h3><i class="fa-solid fa-clipboard-check"></i> Checklist Pembahasan Try Out Bulanan</h3>
+        <div class="header-actions">
+          <div class="entries-control">
+            <span>Kelas</span>
+            <select id="cl_kelas" onchange="terapkanFilterChecklist()"></select>
+            <span id="cl_jenis_label" style="display:none;">Jenis Mapel</span>
+            <select id="cl_jenis" onchange="terapkanFilterChecklist()" style="display:none;">
+              <option value="" disabled selected>-- Pilih Jenis Mapel --</option>
+              <option value="TKA">Mapel TKA</option>
+              <option value="UTBK">Mapel UTBK</option>
+            </select>
+            <span>Bulan</span>
+            <select id="cl_bulan" onchange="terapkanFilterChecklist()"></select>
+            <span>Tahun</span>
+            <select id="cl_tahun" onchange="terapkanFilterChecklist()"></select>
+          </div>
+          <button class="btn-export" onclick="resetFilterChecklist()">
+            <i class="fa fa-rotate-left"></i> Bulan Ini
+          </button>
+        </div>
+      </div>
+      <div class="checklist-info">
+        <i class="fa-solid fa-circle-info"></i>
+        <span>
+          Pilih <b>Kelas</b> terlebih dahulu pada filter di atas untuk menampilkan status pembahasan <b>Try Out Bulanan</b> jenjang SD,SMP, SMA.
+        </span>
+      </div>
+      <div class="checklist-grid" id="checklistGrid">
+        <p>Memuat data...</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="table-area">
+    <div class="card">
+      <h3><i class="fa-solid fa-chart-column"></i> Data Monitoring Harian Jumlah Siswa</h3>
+      <div>
+          <label>&nbsp;</label>
+          <button class="btn-export" id="btnExportMonitoringPdf" onclick="exportMonitoringTablePdf()">
+            <i class="fa-solid fa-file-pdf"></i> Ekspor PDF
+          </button>
+        </div>
+
+      <div class="filter-grid" style="grid-template-columns:repeat(4,1fr); margin-bottom:20px;">
+        
+        <div>
+          <label>Bulan</label>
+          <select id="mon_bulan" onchange="terapkanFilterMonitoring()"></select>
+        </div>
+        <div>
+          <label>Tahun</label>
+          <select id="mon_tahun" onchange="terapkanFilterMonitoring()"></select>
+        </div>
+        
+        <div>
+          <label>&nbsp;</label>
+          <button class="btn-primary" onclick="resetFilterMonitoring()">
+            <i class="fa fa-rotate-left"></i> Bulan Ini
+          </button>
+        </div>
+        
+      </div>
+
+      <p class="table-hint" style="display:flex;"><i class="fa fa-arrows-left-right"></i> Geser tabel ke kanan untuk melihat kolom lainnya</p>
+      <div class="table-responsive">
+        <table id="monitoringTable">
+          <thead id="theadMonitoring">
+          </thead>
+          <tbody id="tbodyMonitoring">
+            <tr><td>Memuat data...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="table-area">
+    <div class="card">
+      <div class="table-header-flex">
+        <h3><i class="fa-solid fa-calendar-days"></i> Rekap Bulanan Jumlah Siswa</h3>
+        <div class="header-actions">
+          <div class="entries-control">
+            <span>Tahun</span>
+            <select id="rekap_tahun" onchange="terapkanFilterRekap()"></select>
+          </div>
+          <button class="btn-export" id="btnExportRekapPdf" onclick="exportRekapTablePdf()">
+            <i class="fa-solid fa-file-pdf"></i> Ekspor PDF
+          </button>
+        </div>
+      </div>
+      <p style="font-size:13px;color:#888;margin-bottom:15px;">
+        Menampilkan jumlah siswa tiap kelas <b>per bulan</b> selama satu tahun. Jika suatu
+        bulan tidak diubah lewat tabel Monitoring Harian di atas, jumlah siswa akan tampil
+        kosong ("-") untuk bulan tersebut.
+      </p>
+      <p class="table-hint" style="display:flex;"><i class="fa fa-arrows-left-right"></i> Geser tabel ke kanan untuk melihat kolom lainnya</p>
+      <div class="table-responsive">
+        <table id="rekapTable">
+          <thead id="theadRekap"></thead>
+          <tbody id="tbodyRekap">
+            <tr><td>Memuat data...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  </div><!-- /#kontenCabang -->
+
+  <section class="table-area" id="kelolaCabangSection" style="display:none;">
+    <div class="card">
+      <div class="table-header-flex">
+        <h3><i class="fa-solid fa-code-branch"></i> Kelola Data Cabang</h3>
+        <div class="header-actions">
+          <button class="btn-export" onclick="bukaFormTambahCabang()">
+            <i class="fa fa-plus"></i> Tambah Cabang
+          </button>
+        </div>
+      </div>
+      <p style="font-size:13px;color:#888;margin-bottom:15px;">
+        Khusus Super Admin. Daftar cabang di sini otomatis muncul pada dropdown "Pilih Cabang".
+        Setelah menambah cabang baru, buatkan juga akun Admin untuk cabang tersebut langsung di
+        sheet <b>USER</b> (isi kolom CABANG persis sama dengan nama cabang di sini).
+      </p>
+      <div class="table-responsive">
+        <table id="cabangTable">
+          <thead>
+            <tr>
+              <th>No</th>
+              <th>Nama Cabang</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="tbodyCabang">
+            <tr><td colspan="3">Memuat data...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="table-area" id="kelolaKelasSection" style="display:none;">
+    <div class="card">
+      <div class="table-header-flex">
+        <h3><i class="fa-solid fa-school"></i> Kelola Data Kelas</h3>
+        <div class="header-actions">
+          <button class="btn-export" onclick="bukaFormTambahKelas()">
+            <i class="fa fa-plus"></i> Tambah Kelas
+          </button>
+        </div>
+      </div>
+      <p style="font-size:13px;color:#888;margin-bottom:15px;">
+        Khusus Super Admin. Daftar kelas di sini BERSAMA untuk seluruh cabang, otomatis dipakai
+        di seluruh sistem (Filter Data, Form Tambah Data, dan Tabel Monitoring Harian).
+      </p>
+      <div class="table-responsive">
+        <table id="kelasTable">
+          <thead>
+            <tr>
+              <th>No</th>
+              <th>Nama Kelas</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="tbodyKelas">
+            <tr><td colspan="3">Memuat data...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="table-area" id="kelolaMapelSection" style="display:none;">
+    <div class="card">
+      <div class="table-header-flex">
+        <h3><i class="fa-solid fa-book-open"></i> Kelola Data Mapel</h3>
+        <div class="header-actions">
+          <button class="btn-export" onclick="bukaFormTambahMapel()">
+            <i class="fa fa-plus"></i> Tambah Mapel
+          </button>
+        </div>
+      </div>
+      <p style="font-size:13px;color:#888;margin-bottom:15px;">
+        Khusus Super Admin. Daftar mapel di sini BERSAMA untuk seluruh cabang, dipakai untuk
+        mengisi dropdown Mata Pelajaran pada Filter Data & Form Tambah Data, serta sistem
+        Checklist Pembahasan Try Out Bulanan (berdasarkan kolom Jenis: TKA/UTBK).
+      </p>
+      <div class="table-responsive">
+        <table id="mapelTable">
+          <thead>
+            <tr>
+              <th>No</th>
+              <th>Nama Mapel</th>
+              <th>Jenis</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="tbodyMapel">
+            <tr><td colspan="4">Memuat data...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="table-area" id="kelolaTentorSection" style="display:none;">
+    <div class="card">
+      <div class="table-header-flex">
+        <h3><i class="fa-solid fa-chalkboard-user"></i> Kelola Data Tentor</h3>
+        <div class="header-actions">
+          <button class="btn-export" onclick="bukaFormTambahTentor()">
+            <i class="fa fa-plus"></i> Tambah Tentor
+          </button>
+        </div>
+      </div>
+      <p style="font-size:13px;color:#888;margin-bottom:15px;">
+        Khusus Super Admin. Daftar tentor di sini BERSAMA untuk seluruh cabang, otomatis dipakai
+        untuk mengisi dropdown "Nama Tentor" pada form Tambah/Edit Data Rangkuman Materi.
+      </p>
+      <div class="table-responsive">
+        <table id="tentorTable">
+          <thead>
+            <tr>
+              <th>No</th>
+              <th>Nama Tentor</th>
+              <th>Bidang / Mapel</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="tbodyTentor">
+            <tr><td colspan="4">Memuat data...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div id="loginModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Login Admin</h2>
+      <span class="close" onclick="closeLogin()">&times;</span>
+    </div>
+    <div class="modal-body">
+      <label>Username</label>
+      <input type="text" id="username_input">
+      <label>Password</label>
+      <input type="password" id="password_input">
+      <button class="btn-primary full" onclick="eksekusiLogin()">Login</button>
+    </div>
+  </div>
+</div>
+
+<section id="adminPanel" class="modal" style="display:none;">
+  <div class="modal-content admin-modal-content">
+    <div class="modal-header">
+      <h2 id="formAdminTitle">Tambah Data Baru</h2>
+      <span class="close" onclick="lihatBeranda()">&times;</span>
+    </div>
+    <div class="modal-body">
+    <input type="hidden" id="a_id">
+    <div class="form-grid">
+      <div>
+        <label>Kelas</label>
+        <select id="a_kelas">
+          <option value="" disabled selected>Pilih Kelas...</option>
+        </select>
+      </div>
+      <div>
+        <label>Mata Pelajaran</label>
+        <select id="a_mapel">
+          <option value="" disabled selected>Pilih Mata Pelajaran...</option>
+        </select>
+      </div>
+      <div>
+        <label>Tanggal</label>
+        <input type="date" id="a_tanggal" onchange="isiHariOtomatis()">
+      </div>
+      <div>
+        <label>Hari (Otomatis)</label>
+        <input type="text" id="a_hari" readonly style="background:#f3f5f9;">
+      </div>
+      <div>
+        <label>Nama Tentor</label>
+        <select id="a_tentor">
+          <option value="" disabled selected>Pilih nama tentor...</option>
+        </select>
+      </div>
+      <div>
+        <label>Jumlah Hadir</label>
+        <input type="number" id="a_hadir">
+      </div>
+    </div>
+
+    <label>Materi Yang Diajarkan</label>
+    <textarea id="a_materi" rows="6"></textarea>
+
+    <div class="button-area">
+      <button class="btn-primary" onclick="simpanFormAdmin()">
+        <i class="fa fa-save"></i> Simpan Data
+      </button>
+      <button class="btn-warning" id="btnBatalEdit" style="display:none;" onclick="resetFormAdmin()">
+        Batal Edit
+      </button>
+      <button class="btn-danger" onclick="lihatBeranda()">
+        <i class="fa fa-xmark"></i> Tutup
+      </button>
+    </div>
+    </div>
+  </div>
+</section>
+
+<section id="cabangModal" class="modal" style="display:none;">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 id="formCabangTitle">Tambah Cabang</h2>
+      <span class="close" onclick="tutupFormCabang()">&times;</span>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="cb_id">
+      <label>Nama Cabang</label>
+      <input type="text" id="cb_nama" placeholder="Contoh: YK-18, YK-19, dst">
+      <button class="btn-primary full" onclick="simpanFormCabang()">
+        <i class="fa fa-save"></i> Simpan Cabang
+      </button>
+    </div>
+  </div>
+</section>
+
+<section id="kelasModal" class="modal" style="display:none;">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 id="formKelasTitle">Tambah Kelas</h2>
+      <span class="close" onclick="tutupFormKelas()">&times;</span>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="k_id">
+      <label>Nama Kelas</label>
+      <input type="text" id="k_nama" placeholder="Contoh: 4 SD, 1 SMP, 3 IPA -1">
+      <button class="btn-primary full" onclick="simpanFormKelas()">
+        <i class="fa fa-save"></i> Simpan Kelas
+      </button>
+    </div>
+  </div>
+</section>
+
+<section id="mapelModal" class="modal" style="display:none;">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 id="formMapelTitle">Tambah Mapel</h2>
+      <span class="close" onclick="tutupFormMapel()">&times;</span>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="m_id">
+      <label>Nama Mapel</label>
+      <input type="text" id="m_nama" placeholder="Contoh: FISIKA">
+      <label>Jenis</label>
+      <select id="m_jenis">
+        <option value="TKA">TKA</option>
+        <option value="UTBK">UTBK</option>
+      </select>
+      <button class="btn-primary full" onclick="simpanFormMapel()">
+        <i class="fa fa-save"></i> Simpan Mapel
+      </button>
+    </div>
+  </div>
+</section>
+
+<section id="tentorModal" class="modal" style="display:none;">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 id="formTentorTitle">Tambah Tentor</h2>
+      <span class="close" onclick="tutupFormTentor()">&times;</span>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="t_id">
+      <label>Nama Tentor</label>
+      <input type="text" id="t_nama" placeholder="Contoh: BUDI SANTOSO, S.Pd">
+      <label>Bidang / Mapel</label>
+      <input type="text" id="t_bidang" list="bidangMapelList" placeholder="Contoh: FISIKA, MTK, BHS INGGRIS">
+      <datalist id="bidangMapelList"></datalist>
+      <p style="font-size:12px;color:#999;margin-top:8px;">
+        Bidang/Mapel dipakai untuk mengelompokkan tentor pada dropdown "Nama Tentor" di form Tambah Data.
+        Boleh memakai bidang yang sudah ada (akan muncul saran saat mengetik) atau membuat bidang baru.
+      </p>
+      <button class="btn-primary full" onclick="simpanFormTentor()">
+        <i class="fa fa-save"></i> Simpan Tentor
+      </button>
+    </div>
+  </div>
+</section>
+
+<footer> 
+  <p>&copy; 2026 Neutron Murangan — Sistem Rangkuman Materi Belajar dan Monitoring Harian Jumlah Siswa</p>
+</footer> 
+
+<script>
+const CONFIG = {
+  API_URL: "https://script.google.com/macros/s/AKfycbxmEVTJbb8Mh2fO1ABSdp2kD5tsYcYJIpaG6-x-xuJHVUAtcMhuK4IMPSqMjeP5rbRC/exec"
+};
+
+const LS = {
+  LOGIN: "neutron_isLoggedIn",
+  PAGE: "neutron_halamanTerakhir",
+  USER: "neutron_adminUser",
+  PASS: "neutron_adminPass",
+  ROLE: "neutron_role",
+  CABANG_ADMIN: "neutron_cabangAdmin",
+  CABANG_PILIH: "neutron_cabangDipilih"
+};
+
+// Urutan kelas untuk tabel monitoring bulanan (BERSAMA semua cabang),
+// dimuat dinamis dari sheet DAFTAR_KELAS (lihat loadKelasList()).
+let KELAS_URUT = [];
+const BULAN_NAMA = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
+const HARI_URUT = ["Senin","Selasa","Rabu","Kamis","Jumat","Sabtu","Minggu"];
+
+// Singkatan mapel supaya tabel monitoring tetap rapi & ringkas
+const MAPEL_SINGKATAN = {
+  "BAHASA INDONESIA": "B.INDO",
+  "BAHASA INGGRIS": "B.ING",
+  "MATEMATIKA": "MTK",
+  "MATEMATIKA TL": "MTK TL",
+  "FISIKA": "FIS",
+  "KIMIA": "KIM",
+  "BIOLOGI": "BIO",
+  "SEJARAH": "SEJ",
+  "GEOGRAFI": "GEO",
+  "SOSIOLOGI": "SOS",
+  "EKONOMI": "EKO",
+  "IPA": "IPA",
+  "PENALARAN UMUM": "PU",
+  "PENGETAHUAN & PEMAHAMAN UMUM": "PPU",
+  "KEMAMPUAN MEMAHAMI BACAAN & MENULIS": "PBM",
+  "PENALARAN MATEMATIKA": "PM",
+  "LITERASI BAHASA INDONESIA": "LIT.INDO",
+  "LITERASI BAHASA INGGRIS": "LIT.ING",
+  "PENGETAHUAN KUANTITATIF": "PK"
+};
+
+// ============ CHECKLIST PEMBAHASAN TRY OUT BULANAN ============
+// MAPEL_TKA_LIST & MAPEL_UTBK_LIST TIDAK lagi hardcode -- diisi otomatis
+// dari data mapel bersama (DAFTAR_MAPEL) setiap kali loadMapel() selesai
+// (lihat perbaruiDaftarMapelTkaUtbk()).
+let MAPEL_TKA_LIST = [];
+let MAPEL_UTBK_LIST = [];
+
+// Subset mapel KHUSUS untuk 6 SD & 3 SMP (bukan seluruh daftar TKA).
+const MAPEL_6SD_LIST = ["BAHASA INDONESIA", "MATEMATIKA", "IPA"];
+const MAPEL_3SMP_LIST = ["BAHASA INDONESIA", "MATEMATIKA", "FISIKA", "BIOLOGI"];
+
+function buatMapelItems(daftar, jenis) {
+  return daftar.map(m => ({ mapel: m, jenis: jenis }));
+}
+
+// Menentukan daftar mapel yang dicek untuk SATU kelas spesifik pada
+// Checklist Try Out Bulanan. Dibangun dari MAPEL_TKA_LIST/MAPEL_UTBK_LIST
+// yang sekarang dinamis (mengikuti DAFTAR_MAPEL), BUKAN objek statis lagi.
+function getMapelItemsUntukKelas(kelasFilter) {
+  if (kelasFilter === "6 SD") {
+    return buatMapelItems(MAPEL_6SD_LIST.filter(m => MAPEL_TKA_LIST.indexOf(m) !== -1), "TKA");
+  }
+  if (kelasFilter === "3 SMP -1" || kelasFilter === "3 SMP -2") {
+    return buatMapelItems(MAPEL_3SMP_LIST.filter(m => MAPEL_TKA_LIST.indexOf(m) !== -1), "TKA");
+  }
+  if (KELAS_PERLU_JENIS.indexOf(kelasFilter) !== -1) {
+    return buatMapelItems(MAPEL_TKA_LIST, "TKA").concat(buatMapelItems(MAPEL_UTBK_LIST, "UTBK"));
+  }
+  return null;
+}
+
+const KELAS_TRYOUT_LIST = ["6 SD", "3 SMP -1", "3 SMP -2", "3 IPA -1", "3 IPA -2", "3 IPS -1"];
+const KELAS_PERLU_JENIS = ["3 IPA -1", "3 IPA -2", "3 IPS -1"];
+
+const REGEX_PEMBAHASAN = /pembahasan/i;
+const REGEX_TRY_OUT = /try\s*out/i;
+const REGEX_TKA = /\btka\b/i;
+const REGEX_UTBK = /\butbk\b/i;
+
+function cocokTryOutJenis(materi, jenis) {
+  const teks = String(materi || "");
+  if (!REGEX_PEMBAHASAN.test(teks)) return false;
+  if (!REGEX_TRY_OUT.test(teks)) return false;
+  if (jenis === "UTBK") return REGEX_UTBK.test(teks);
+  return REGEX_TKA.test(teks);
+}
+
+function singkatMapel(namaMapel) {
+  const nama = String(namaMapel).trim().toUpperCase();
+  if (MAPEL_SINGKATAN[nama]) return MAPEL_SINGKATAN[nama];
+  const kata = nama.split(/\s+/).filter(Boolean);
+  if (kata.length <= 1) return nama.substring(0, 6);
+  return kata.map(k => k[0]).join("").substring(0, 6);
+}
+
+// ============ STATE UTAMA ============
+let semuaData = [];
+let dataTerfilter = [];
+let halamanAktif = 1;
+let loginStatus = false;
+let userRole = "";        // "ADMIN" atau "SUPERADMIN"
+let adminCabang = "";     // hanya terisi untuk role ADMIN (cabang miliknya)
+
+let daftarCabang = [];
+let selectedCabang = "";  // cabang yang sedang aktif ditampilkan/dikelola
+
+let rosterKelas = {};
+let daftarKelas = [];
+let daftarTentor = [];
+let daftarMapel = [];
+
+const CHOICES_OPSI = {
+  searchEnabled: true,
+  shouldSort: false,
+  itemSelectText: '',
+  searchPlaceholderValue: 'Ketik untuk mencari...',
+  noResultsText: 'Tidak ada hasil ditemukan',
+  noChoicesText: 'Tidak ada pilihan',
+  fuseOptions: { threshold: 0.3 }
+};
+let chKelasFilter = null, chMapelFilter = null;
+let chAKelas = null, chAMapel = null, chATentor = null;
+let chMonBulan = null, chMonTahun = null, chClKelas = null;
+let chPilihCabang = null;
+
+function buatSearchableSelect(id) {
+  const el = document.getElementById(id);
+  if (!el || typeof Choices === "undefined") return null;
+  try { return new Choices(el, CHOICES_OPSI); } catch (e) { return null; }
+}
+function segarkanSearchableSelect(instance, id) {
+  if (instance) { try { instance.destroy(); } catch (e) {} }
+  return buatSearchableSelect(id);
+}
+function setPilihanSelect(instance, elementId, value) {
+  const el = document.getElementById(elementId);
+  if (el) el.value = value;
+  if (instance) { try { instance.setChoiceByValue(value); } catch (e) {} }
+}
+function kosongkanPilihanSelect(instance, elementId) {
+  const el = document.getElementById(elementId);
+  if (el) el.value = "";
+  if (instance) { try { instance.removeActiveItems(); } catch (e) {} }
+}
+
+function aturSpacerNavbar() {
+  const navbar = document.querySelector(".navbar");
+  const spacer = document.getElementById("navbarSpacer");
+  if (!navbar || !spacer) return;
+  const modeMobile = window.matchMedia("(max-width:768px)").matches;
+  if (modeMobile) {
+    spacer.style.display = "block";
+    spacer.style.height = navbar.offsetHeight + "px";
+  } else {
+    spacer.style.display = "none";
+    spacer.style.height = "0px";
+  }
+}
+
+// ================================================================
+// ====                 SKELETON LOADING                        ====
+// ================================================================
+function renderSkeletonStats() {
+  ["jumlahMateri", "jumlahSiswa", "jumlahTentor"].forEach(function (id) {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = '<span class="skeleton skeleton-stat-number"></span>';
+  });
+}
+function renderSkeletonTable(jumlahBaris) {
+  jumlahBaris = jumlahBaris || 6;
+  const tbody = document.getElementById("tbody");
+  if (!tbody) return;
+  let html = "";
+  for (let i = 0; i < jumlahBaris; i++) {
+    html += `<tr class="skeleton-row">
+      <td><div class="skeleton skeleton-text" style="width:18px;margin:6px auto;"></div></td>
+      <td><div class="skeleton skeleton-badge"></div></td>
+      <td><div class="skeleton skeleton-badge" style="width:55px;"></div></td>
+      <td><div class="skeleton skeleton-text" style="width:110px;margin:6px auto;"></div></td>
+      <td><div class="skeleton skeleton-text" style="width:130px;margin:6px auto;"></div></td>
+      <td><div class="skeleton skeleton-text" style="width:92%;"></div></td>
+      <td><div class="skeleton skeleton-text" style="width:55px;margin:6px auto;"></div></td>
+    </tr>`;
+  }
+  tbody.innerHTML = html;
+}
+function renderSkeletonChecklist() {
+  const grid = document.getElementById("checklistGrid");
+  if (!grid) return;
+  const satuKartu = `
+    <div class="skeleton-checklist-card">
+      <div class="skeleton skeleton-text"></div>
+      <div class="skeleton skeleton-bar"></div>
+      <div class="skeleton skeleton-text" style="width:80%;"></div>
+      <div class="skeleton skeleton-text" style="width:70%;"></div>
+      <div class="skeleton skeleton-text" style="width:75%;"></div>
+    </div>`;
+  grid.innerHTML = satuKartu + satuKartu;
+}
+function renderSkeletonMonitoring() {
+  const tbody = document.getElementById("tbodyMonitoring");
+  if (!tbody) return;
+  let html = "";
+  for (let i = 0; i < 5; i++) html += `<tr><td colspan="14" style="padding:10px;"><div class="skeleton skeleton-mon-bar"></div></td></tr>`;
+  tbody.innerHTML = html;
+}
+function renderSkeletonRekap() {
+  const tbody = document.getElementById("tbodyRekap");
+  if (!tbody) return;
+  let html = "";
+  for (let i = 0; i < 5; i++) html += `<tr><td colspan="14" style="padding:10px;"><div class="skeleton skeleton-mon-bar"></div></td></tr>`;
+  tbody.innerHTML = html;
+}
+
+// ================================================================
+// ====                       ON LOAD                           ====
+// ================================================================
+window.onload = function () {
+  loginStatus = (localStorage.getItem(LS.LOGIN) === "true");
+  userRole = localStorage.getItem(LS.ROLE) || "";
+  adminCabang = localStorage.getItem(LS.CABANG_ADMIN) || "";
+
+  if (loginStatus) {
+    gantiTombolKeLogout();
+    terapkanTampilanRole();
+  }
+
+  renderSkeletonStats();
+  renderSkeletonTable();
+  renderSkeletonChecklist();
+  renderSkeletonMonitoring();
+  renderSkeletonRekap();
+
+  isiFilterBulanTahun();
+  isiFilterBulanTahunChecklist();
+  isiFilterTahunRekap();
+
+  chKelasFilter = buatSearchableSelect("kelas");
+  chAKelas = buatSearchableSelect("a_kelas");
+  chAMapel = buatSearchableSelect("a_mapel");
+  chATentor = buatSearchableSelect("a_tentor");
+  chClKelas = buatSearchableSelect("cl_kelas");
+  chPilihCabang = buatSearchableSelect("pilihCabang");
+
+  // Data BERSAMA (Kelas, Tentor, Mapel, Cabang) dimuat paralel di awal,
+  // baru setelah itu tentukan cabang aktif & muat data PER CABANG.
+  Promise.all([loadKelasList(), loadTentorList(), loadMapel(), loadCabangList()]).then(function () {
+    tentukanCabangAktifSaatMuat();
+  });
+
+  pulihkanHalamanTerakhir();
+
+  aturSpacerNavbar();
+  window.addEventListener("resize", aturSpacerNavbar);
+  setTimeout(aturSpacerNavbar, 300);
+
+  document.getElementById("tbody").addEventListener("click", function (e) {
+    const editBtn = e.target.closest(".btn-warning[data-id]");
+    if (editBtn) { siapkanEdit(editBtn.getAttribute("data-id")); return; }
+    const delBtn = e.target.closest(".btn-delete[data-id]");
+    if (delBtn) hapusData(delBtn.getAttribute("data-id"));
+  });
+
+  document.getElementById("tbodyMonitoring").addEventListener("change", function (e) {
+    const input = e.target.closest(".input-jumlah-siswa");
+    if (!input) return;
+    const kelas = input.getAttribute("data-kelas");
+    const nilai = parseInt(input.value) || 0;
+    simpanJumlahSiswa(kelas, nilai);
+  });
+
+  document.getElementById("tbodyKelas").addEventListener("click", function (e) {
+    const editBtn = e.target.closest(".btn-warning[data-id]");
+    if (editBtn) { siapkanEditKelas(editBtn.getAttribute("data-id")); return; }
+    const delBtn = e.target.closest(".btn-delete[data-id]");
+    if (delBtn) hapusKelas(delBtn.getAttribute("data-id"), delBtn.getAttribute("data-nama"));
+  });
+
+  document.getElementById("tbodyTentor").addEventListener("click", function (e) {
+    const editBtn = e.target.closest(".btn-warning[data-id]");
+    if (editBtn) { siapkanEditTentor(editBtn.getAttribute("data-id")); return; }
+    const delBtn = e.target.closest(".btn-delete[data-id]");
+    if (delBtn) hapusTentor(delBtn.getAttribute("data-id"), delBtn.getAttribute("data-nama"));
+  });
+
+  document.getElementById("tbodyMapel").addEventListener("click", function (e) {
+    const editBtn = e.target.closest(".btn-warning[data-id]");
+    if (editBtn) { siapkanEditMapel(editBtn.getAttribute("data-id")); return; }
+    const delBtn = e.target.closest(".btn-delete[data-id]");
+    if (delBtn) hapusMapel(delBtn.getAttribute("data-id"), delBtn.getAttribute("data-nama"));
+  });
+
+  document.getElementById("tbodyCabang").addEventListener("click", function (e) {
+    const editBtn = e.target.closest(".btn-warning[data-id]");
+    if (editBtn) { siapkanEditCabang(editBtn.getAttribute("data-id")); return; }
+    const delBtn = e.target.closest(".btn-delete[data-id]");
+    if (delBtn) hapusCabang(delBtn.getAttribute("data-id"), delBtn.getAttribute("data-nama"));
+  });
+
+  ambilLogoBase64();
+};
+
+function escapeHtml(str) {
+  if (str === null || str === undefined) return "";
+  return String(str)
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+}
+
+function apiPost(action, data) {
+  data = data || {};
+  if (loginStatus) {
+    data.adminUser = localStorage.getItem(LS.USER);
+    data.adminPass = localStorage.getItem(LS.PASS);
+  }
+  return fetch(CONFIG.API_URL, {
+    method: "POST",
+    headers: { "Content-Type": "text/plain;charset=utf-8" },
+    body: JSON.stringify(Object.assign({ action: action }, data))
+  }).then(res => res.json());
+}
+
+function showLoading() { document.getElementById("loading").style.display = "flex"; }
+function hideLoading() { document.getElementById("loading").style.display = "none"; }
+function openLogin() { document.getElementById("loginModal").style.display = "flex"; }
+function closeLogin() { document.getElementById("loginModal").style.display = "none"; }
+
+function tampilkanAdminPanel() {
+  if (!loginStatus) {
+    Swal.fire("Akses Ditolak", "Silakan login sebagai admin terlebih dahulu.", "error");
+    lihatBeranda();
+    return;
+  }
+  if (!selectedCabang) {
+    Swal.fire("Pilih Cabang Dulu", "Silakan pilih cabang terlebih dahulu sebelum menambah data.", "warning");
+    return;
+  }
+  document.getElementById("adminPanel").style.display = "flex";
+  localStorage.setItem(LS.PAGE, "adminPanel");
+}
+
+function lihatBeranda() {
+  document.getElementById("adminPanel").style.display = "none";
+  localStorage.setItem(LS.PAGE, "halamanUtama");
+}
+
+function pulihkanHalamanTerakhir() {
+  const halaman = localStorage.getItem(LS.PAGE);
+  if (halaman === "adminPanel" && loginStatus) {
+    tampilkanAdminPanel();
+  } else {
+    lihatBeranda();
+  }
+}
+
+function gantiTombolKeLogout() {
+  const btn = document.getElementById("btnLoginLogout");
+  btn.innerHTML = '<i class="fa fa-right-from-bracket"></i> Logout Admin';
+  btn.onclick = eksekusiLogout;
+}
+function gantiTombolKeLogin() {
+  const btn = document.getElementById("btnLoginLogout");
+  btn.innerHTML = '<i class="fa fa-user-lock"></i> Login Admin';
+  btn.onclick = openLogin;
+}
+
+// Menampilkan/menyembunyikan elemen sesuai role yang sedang login:
+// - btnTambahData     : ADMIN & SUPERADMIN (data materi per cabang)
+// - Kelola Cabang/Kelas/Mapel/Tentor : HANYA SUPERADMIN (data bersama)
+function terapkanTampilanRole() {
+  document.getElementById("btnTambahData").style.display = loginStatus ? "inline-flex" : "none";
+
+  const khususSuperadmin = loginStatus && userRole === "SUPERADMIN";
+  document.getElementById("kelolaCabangSection").style.display = khususSuperadmin ? "block" : "none";
+  document.getElementById("kelolaKelasSection").style.display = khususSuperadmin ? "block" : "none";
+  document.getElementById("kelolaMapelSection").style.display = khususSuperadmin ? "block" : "none";
+  document.getElementById("kelolaTentorSection").style.display = khususSuperadmin ? "block" : "none";
+
+  if (khususSuperadmin) {
+    renderTabelCabang();
+    renderTabelKelola();
+    renderTabelMapel();
+    renderTabelTentor();
+  }
+
+  aturKuncCabangSelector();
+}
+
+// Jika admin login sebagai ADMIN (bukan SUPERADMIN), dropdown Pilih Cabang
+// dikunci ke cabang miliknya sendiri -- tidak bisa lihat/kelola cabang lain.
+function aturKuncCabangSelector() {
+  const selCabang = document.getElementById("pilihCabang");
+  const catatan = document.getElementById("catatanCabangTerkunci");
+  const terkunci = loginStatus && userRole === "ADMIN";
+
+  if (selCabang) selCabang.disabled = terkunci;
+  if (catatan) catatan.style.display = terkunci ? "inline" : "none";
+}
+
+function eksekusiLogin() {
+  const u = document.getElementById("username_input").value;
+  const p = document.getElementById("password_input").value;
+  if (!u || !p) {
+    Swal.fire("Oops", "Semua kolom wajib diisi!", "warning");
+    return;
+  }
+  showLoading();
+
+  fetch(CONFIG.API_URL, {
+    method: "POST",
+    headers: { "Content-Type": "text/plain;charset=utf-8" },
+    body: JSON.stringify({ action: "login", username: u, password: p })
+  })
+  .then(res => res.json())
+  .then(res => {
+    hideLoading();
+    if (res.status) {
+      loginStatus = true;
+      userRole = res.role || "ADMIN";
+      adminCabang = res.cabang || "";
+
+      localStorage.setItem(LS.LOGIN, "true");
+      localStorage.setItem(LS.USER, u);
+      localStorage.setItem(LS.PASS, p);
+      localStorage.setItem(LS.ROLE, userRole);
+      localStorage.setItem(LS.CABANG_ADMIN, adminCabang);
+
+      closeLogin();
+      gantiTombolKeLogout();
+      terapkanTampilanRole();
+      lihatBeranda();
+
+      // Admin cabang (bukan superadmin) otomatis diarahkan ke cabangnya sendiri
+      if (userRole === "ADMIN" && adminCabang) {
+        gantiCabangKe(adminCabang);
+      } else if (selectedCabang) {
+        muatSemuaDataCabang();
+      }
+
+      Swal.fire("Berhasil", "Selamat datang, " + res.nama, "success");
+    } else {
+      Swal.fire("Gagal", res.message, "error");
+    }
+  }).catch(() => hideLoading());
+}
+
+function eksekusiLogout() {
+  loginStatus = false;
+  userRole = "";
+  adminCabang = "";
+  localStorage.removeItem(LS.LOGIN);
+  localStorage.removeItem(LS.USER);
+  localStorage.removeItem(LS.PASS);
+  localStorage.removeItem(LS.ROLE);
+  localStorage.removeItem(LS.CABANG_ADMIN);
+
+  gantiTombolKeLogin();
+  terapkanTampilanRole();
+  lihatBeranda();
+  if (selectedCabang) muatSemuaDataCabang();
+  Swal.fire("Logout", "Anda telah keluar dari sistem admin.", "success");
+}
+
+// ================================================================
+// ====                  PILIH CABANG                            ====
+// ================================================================
+
+function loadCabangList() {
+  return fetch(CONFIG.API_URL + "?action=getCabangList")
+    .then(res => res.json())
+    .then(res => {
+      daftarCabang = res || [];
+      const sel = document.getElementById("pilihCabang");
+      const nilaiSebelumnya = sel.value;
+      sel.innerHTML = '<option value="" disabled selected>-- Pilih Cabang --</option>' +
+        daftarCabang.map(c => `<option value="${escapeHtml(c.nama)}">${escapeHtml(c.nama)}</option>`).join("");
+      chPilihCabang = segarkanSearchableSelect(chPilihCabang, "pilihCabang");
+      if (nilaiSebelumnya) setPilihanSelect(chPilihCabang, "pilihCabang", nilaiSebelumnya);
+    }).catch(() => {});
+}
+
+// Menentukan cabang aktif saat halaman pertama kali dibuka:
+// - Admin (role ADMIN, sudah login)  -> dikunci ke cabangnya sendiri.
+// - Selain itu (publik / SUPERADMIN) -> pakai cabang terakhir yang
+//   tersimpan di localStorage, jika masih valid ada di DAFTAR_CABANG.
+function tentukanCabangAktifSaatMuat() {
+  if (loginStatus && userRole === "ADMIN" && adminCabang) {
+    gantiCabangKe(adminCabang);
+    return;
+  }
+
+  const tersimpan = localStorage.getItem(LS.CABANG_PILIH);
+  const valid = tersimpan && daftarCabang.some(c => c.nama.toUpperCase() === tersimpan.toUpperCase());
+  if (valid) {
+    gantiCabangKe(tersimpan);
+  } else {
+    tampilkanPlaceholderCabang();
+  }
+}
+
+// Dipanggil saat dropdown #pilihCabang diubah manual oleh pengguna
+function gantiCabang() {
+  const sel = document.getElementById("pilihCabang");
+  if (!sel.value) return;
+  gantiCabangKe(sel.value);
+}
+
+function gantiCabangKe(namaCabang) {
+  selectedCabang = String(namaCabang).trim();
+  localStorage.setItem(LS.CABANG_PILIH, selectedCabang);
+  setPilihanSelect(chPilihCabang, "pilihCabang", selectedCabang);
+  aturKuncCabangSelector();
+
+  const badge = document.getElementById("cabangBadge");
+  const badgeNama = document.getElementById("cabangBadgeNama");
+  if (badge && badgeNama) {
+    badgeNama.innerText = selectedCabang;
+    badge.style.display = "flex";
+  }
+
+  document.getElementById("placeholderPilihCabang").style.display = "none";
+  document.getElementById("kontenCabang").style.display = "block";
+
+  muatSemuaDataCabang();
+}
+
+function tampilkanPlaceholderCabang() {
+  document.getElementById("placeholderPilihCabang").style.display = "block";
+  document.getElementById("kontenCabang").style.display = "none";
+  const badge = document.getElementById("cabangBadge");
+  if (badge) badge.style.display = "none";
+}
+
+// Memuat SEMUA data yang tergantung cabang (materi, monitoring, checklist, rekap)
+function muatSemuaDataCabang() {
+  renderSkeletonStats();
+  renderSkeletonTable();
+  renderSkeletonChecklist();
+  renderSkeletonMonitoring();
+  renderSkeletonRekap();
+
+  loadData().then(function () {
+    terapkanFilterMonitoring();
+    terapkanFilterChecklist();
+    terapkanFilterRekap();
+  });
+}
+
+// ================================================================
+// ====        KELOLA DATA CABANG (CRUD, khusus Super Admin)     ====
+// ================================================================
+function renderTabelCabang() {
+  const tbody = document.getElementById("tbodyCabang");
+  if (!tbody) return;
+  if (!daftarCabang || daftarCabang.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="3">Belum ada data cabang. Klik "Tambah Cabang" untuk menambahkan.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = "";
+  daftarCabang.forEach((c, i) => {
+    tbody.innerHTML += `<tr>
+      <td>${i + 1}</td>
+      <td style="text-align:left;font-weight:600;">${escapeHtml(c.nama)}</td>
+      <td>
+        <div class="action">
+          <button class="btn-warning" data-id="${escapeHtml(c.id)}"><i class="fa fa-edit"></i></button>
+          <button class="btn-delete" data-id="${escapeHtml(c.id)}" data-nama="${escapeHtml(c.nama)}"><i class="fa fa-trash"></i></button>
+        </div>
+      </td>
+    </tr>`;
+  });
+}
+
+function bukaFormTambahCabang() {
+  document.getElementById("formCabangTitle").innerText = "Tambah Cabang";
+  document.getElementById("cb_id").value = "";
+  document.getElementById("cb_nama").value = "";
+  document.getElementById("cabangModal").style.display = "flex";
+}
+function siapkanEditCabang(id) {
+  const item = daftarCabang.find(x => x.id === id);
+  if (!item) return;
+  document.getElementById("formCabangTitle").innerText = "Edit Cabang";
+  document.getElementById("cb_id").value = item.id;
+  document.getElementById("cb_nama").value = item.nama;
+  document.getElementById("cabangModal").style.display = "flex";
+}
+function tutupFormCabang() { document.getElementById("cabangModal").style.display = "none"; }
+
+function simpanFormCabang() {
+  const id = document.getElementById("cb_id").value;
+  const nama = document.getElementById("cb_nama").value.trim();
+  if (!nama) { Swal.fire("Oops", "Nama cabang wajib diisi!", "warning"); return; }
+
+  showLoading();
+  const aksi = id ? "updateCabang" : "saveCabang";
+  const payload = id ? { id: id, nama: nama } : { nama: nama };
+
+  apiPost(aksi, payload).then(res => {
+    hideLoading();
+    if (res.status) {
+      Swal.fire("Berhasil", res.message, "success");
+      tutupFormCabang();
+      loadCabangList().then(function () { renderTabelCabang(); });
+    } else {
+      Swal.fire("Gagal", res.message, "error");
+    }
+  }).catch(() => hideLoading());
+}
+
+function hapusCabang(id, nama) {
+  Swal.fire({
+    title: "Hapus cabang '" + nama + "'?",
+    text: "Cabang ini akan dihapus dari daftar pilihan. Data materi & siswa yang sudah ada untuk cabang ini TIDAK ikut terhapus.",
+    icon: "warning", showCancelButton: true,
+    confirmButtonColor: "#dc3545", cancelButtonColor: "#555", confirmButtonText: "Ya, Hapus!"
+  }).then((result) => {
+    if (result.isConfirmed) {
+      showLoading();
+      apiPost("deleteCabang", { id: id }).then(res => {
+        hideLoading();
+        if (res.status) {
+          Swal.fire("Terhapus!", res.message, "success");
+          loadCabangList().then(function () { renderTabelCabang(); });
+        } else {
+          Swal.fire("Gagal", res.message, "error");
+        }
+      });
+    }
+  });
+}
+
+// ================================================================
+// ====      DATA BERSAMA: KELAS / TENTOR / MAPEL (loader)       ====
+// ================================================================
+function loadKelasList() {
+  return fetch(CONFIG.API_URL + "?action=getKelasList")
+    .then(res => res.json())
+    .then(res => {
+      daftarKelas = res || [];
+      KELAS_URUT = daftarKelas.map(k => k.nama);
+      renderPilihanKelas();
+    }).catch(() => {});
+}
+
+function renderPilihanKelas() {
+  const selFilter = document.getElementById("kelas");
+  if (selFilter) {
+    const nilaiSebelumnya = selFilter.value;
+    selFilter.innerHTML = '<option value="">Semua Kelas</option>' +
+      KELAS_URUT.map(k => `<option>${escapeHtml(k)}</option>`).join("");
+    chKelasFilter = segarkanSearchableSelect(chKelasFilter, "kelas");
+    setPilihanSelect(chKelasFilter, "kelas", nilaiSebelumnya || "");
+  }
+
+  const selForm = document.getElementById("a_kelas");
+  if (selForm) {
+    const nilaiSebelumnya = selForm.value;
+    selForm.innerHTML = '<option value="" disabled selected>Pilih Kelas...</option>' +
+      KELAS_URUT.map(k => `<option>${escapeHtml(k)}</option>`).join("");
+    chAKelas = segarkanSearchableSelect(chAKelas, "a_kelas");
+    if (nilaiSebelumnya) setPilihanSelect(chAKelas, "a_kelas", nilaiSebelumnya);
+  }
+}
+
+function loadTentorList() {
+  return fetch(CONFIG.API_URL + "?action=getTentorList")
+    .then(res => res.json())
+    .then(res => {
+      daftarTentor = res || [];
+      renderPilihanTentor();
+    }).catch(() => {});
+}
+
+function renderPilihanTentor() {
+  const selForm = document.getElementById("a_tentor");
+  if (!selForm) return;
+  const nilaiSebelumnya = selForm.value;
+
+  const grup = {};
+  const urutanBidang = [];
+  daftarTentor.forEach(t => {
+    const bidang = t.bidang || "LAINNYA";
+    if (!grup[bidang]) { grup[bidang] = []; urutanBidang.push(bidang); }
+    grup[bidang].push(t.nama);
+  });
+
+  let html = '<option value="" disabled selected>Pilih nama tentor...</option>';
+  urutanBidang.forEach(bidang => {
+    html += `<optgroup label="${escapeHtml(bidang)}">`;
+    grup[bidang].forEach(nama => { html += `<option value="${escapeHtml(nama)}">${escapeHtml(nama)}</option>`; });
+    html += `</optgroup>`;
+  });
+  selForm.innerHTML = html;
+
+  chATentor = segarkanSearchableSelect(chATentor, "a_tentor");
+  if (nilaiSebelumnya) setPilihanSelect(chATentor, "a_tentor", nilaiSebelumnya);
+}
+
+// getMapelList (bersama) -> isi filter #mapel (flat), form #a_mapel (grouped
+// jenis TKA/UTBK), dan MAPEL_TKA_LIST/MAPEL_UTBK_LIST dinamis untuk checklist.
+function loadMapel() {
+  return fetch(CONFIG.API_URL + "?action=getMapelList")
+    .then(res => res.json())
+    .then(res => {
+      daftarMapel = res || [];
+      MAPEL_TKA_LIST = daftarMapel.filter(m => m.jenis === "TKA").map(m => m.nama);
+      MAPEL_UTBK_LIST = daftarMapel.filter(m => m.jenis === "UTBK").map(m => m.nama);
+      renderPilihanMapelFilter();
+      renderPilihanMapelForm();
+    }).catch(() => {});
+}
+
+function renderPilihanMapelFilter() {
+  const s = document.getElementById("mapel");
+  if (!s) return;
+  const nilaiSebelumnya = s.value;
+  s.innerHTML = '<option value="">Semua Mata Pelajaran</option>' +
+    daftarMapel.map(m => `<option>${escapeHtml(m.nama)}</option>`).join("");
+  chMapelFilter = segarkanSearchableSelect(chMapelFilter, "mapel");
+  if (nilaiSebelumnya) setPilihanSelect(chMapelFilter, "mapel", nilaiSebelumnya);
+}
+
+function renderPilihanMapelForm() {
+  const selForm = document.getElementById("a_mapel");
+  if (!selForm) return;
+  const nilaiSebelumnya = selForm.value;
+
+  const tka = daftarMapel.filter(m => m.jenis === "TKA");
+  const utbk = daftarMapel.filter(m => m.jenis === "UTBK");
+
+  let html = '<option value="" disabled selected>Pilih Mata Pelajaran...</option>';
+  if (tka.length) {
+    html += `<optgroup label="MAPEL TKA">`;
+    tka.forEach(m => { html += `<option value="${escapeHtml(m.nama)}">${escapeHtml(m.nama)}</option>`; });
+    html += `</optgroup>`;
+  }
+  if (utbk.length) {
+    html += `<optgroup label="MAPEL UTBK">`;
+    utbk.forEach(m => { html += `<option value="${escapeHtml(m.nama)}">${escapeHtml(m.nama)}</option>`; });
+    html += `</optgroup>`;
+  }
+  selForm.innerHTML = html;
+
+  chAMapel = segarkanSearchableSelect(chAMapel, "a_mapel");
+  if (nilaiSebelumnya) setPilihanSelect(chAMapel, "a_mapel", nilaiSebelumnya);
+}
+
+// ================================================================
+// ====        KELOLA DATA KELAS (CRUD, khusus Super Admin)      ====
+// ================================================================
+function renderTabelKelola() {
+  const tbody = document.getElementById("tbodyKelas");
+  if (!tbody) return;
+
+  if (!daftarKelas || daftarKelas.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="3">Belum ada data kelas. Klik "Tambah Kelas" untuk menambahkan.</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = "";
+  daftarKelas.forEach((k, i) => {
+    tbody.innerHTML += `<tr>
+      <td>${i + 1}</td>
+      <td style="text-align:left;font-weight:600;">${escapeHtml(k.nama)}</td>
+      <td>
+        <div class="action">
+          <button class="btn-warning" data-id="${escapeHtml(k.id)}"><i class="fa fa-edit"></i></button>
+          <button class="btn-delete" data-id="${escapeHtml(k.id)}" data-nama="${escapeHtml(k.nama)}"><i class="fa fa-trash"></i></button>
+        </div>
+      </td>
+    </tr>`;
+  });
+}
+
+function bukaFormTambahKelas() {
+  document.getElementById("formKelasTitle").innerText = "Tambah Kelas";
+  document.getElementById("k_id").value = "";
+  document.getElementById("k_nama").value = "";
+  document.getElementById("kelasModal").style.display = "flex";
+}
+function siapkanEditKelas(id) {
+  const item = daftarKelas.find(x => x.id === id);
+  if (!item) return;
+  document.getElementById("formKelasTitle").innerText = "Edit Kelas";
+  document.getElementById("k_id").value = item.id;
+  document.getElementById("k_nama").value = item.nama;
+  document.getElementById("kelasModal").style.display = "flex";
+}
+function tutupFormKelas() { document.getElementById("kelasModal").style.display = "none"; }
+
+function simpanFormKelas() {
+  const id = document.getElementById("k_id").value;
+  const nama = document.getElementById("k_nama").value.trim();
+  if (!nama) { Swal.fire("Oops", "Nama kelas wajib diisi!", "warning"); return; }
+
+  showLoading();
+  const aksi = id ? "updateKelas" : "saveKelas";
+  const payload = id ? { id: id, nama: nama } : { nama: nama };
+
+  apiPost(aksi, payload).then(res => {
+    hideLoading();
+    if (res.status) {
+      Swal.fire("Berhasil", res.message, "success");
+      tutupFormKelas();
+      loadKelasList().then(function () {
+        renderTabelKelola();
+        if (selectedCabang) { terapkanFilterMonitoring(); terapkanFilterRekap(); loadData(); }
+      });
+    } else {
+      Swal.fire("Gagal", res.message, "error");
+    }
+  }).catch(() => hideLoading());
+}
+
+function hapusKelas(id, nama) {
+  Swal.fire({
+    title: "Hapus kelas '" + nama + "'?",
+    text: "Kelas ini akan dihapus dari daftar pilihan (berlaku untuk semua cabang). Data yang sudah ada TIDAK akan ikut terhapus.",
+    icon: "warning", showCancelButton: true,
+    confirmButtonColor: "#dc3545", cancelButtonColor: "#555", confirmButtonText: "Ya, Hapus!"
+  }).then((result) => {
+    if (result.isConfirmed) {
+      showLoading();
+      apiPost("deleteKelas", { id: id }).then(res => {
+        hideLoading();
+        if (res.status) {
+          Swal.fire("Terhapus!", res.message, "success");
+          loadKelasList().then(function () {
+            renderTabelKelola();
+            if (selectedCabang) { terapkanFilterMonitoring(); terapkanFilterRekap(); }
+          });
+        } else {
+          Swal.fire("Gagal", res.message, "error");
+        }
+      });
+    }
+  });
+}
+
+// ================================================================
+// ====       KELOLA DATA MAPEL (CRUD, khusus Super Admin)       ====
+// ================================================================
+function renderTabelMapel() {
+  const tbody = document.getElementById("tbodyMapel");
+  if (!tbody) return;
+
+  if (!daftarMapel || daftarMapel.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="4">Belum ada data mapel. Klik "Tambah Mapel" untuk menambahkan.</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = "";
+  daftarMapel.forEach((m, i) => {
+    tbody.innerHTML += `<tr>
+      <td>${i + 1}</td>
+      <td style="text-align:left;font-weight:600;">${escapeHtml(m.nama)}</td>
+      <td><span class="badge badge-kelas">${escapeHtml(m.jenis)}</span></td>
+      <td>
+        <div class="action">
+          <button class="btn-warning" data-id="${escapeHtml(m.id)}"><i class="fa fa-edit"></i></button>
+          <button class="btn-delete" data-id="${escapeHtml(m.id)}" data-nama="${escapeHtml(m.nama)}"><i class="fa fa-trash"></i></button>
+        </div>
+      </td>
+    </tr>`;
+  });
+}
+
+function bukaFormTambahMapel() {
+  document.getElementById("formMapelTitle").innerText = "Tambah Mapel";
+  document.getElementById("m_id").value = "";
+  document.getElementById("m_nama").value = "";
+  document.getElementById("m_jenis").value = "TKA";
+  document.getElementById("mapelModal").style.display = "flex";
+}
+function siapkanEditMapel(id) {
+  const item = daftarMapel.find(x => x.id === id);
+  if (!item) return;
+  document.getElementById("formMapelTitle").innerText = "Edit Mapel";
+  document.getElementById("m_id").value = item.id;
+  document.getElementById("m_nama").value = item.nama;
+  document.getElementById("m_jenis").value = item.jenis;
+  document.getElementById("mapelModal").style.display = "flex";
+}
+function tutupFormMapel() { document.getElementById("mapelModal").style.display = "none"; }
+
+function simpanFormMapel() {
+  const id = document.getElementById("m_id").value;
+  const nama = document.getElementById("m_nama").value.trim();
+  const jenis = document.getElementById("m_jenis").value;
+  if (!nama || !jenis) { Swal.fire("Oops", "Nama mapel & jenis wajib diisi!", "warning"); return; }
+
+  showLoading();
+  const aksi = id ? "updateMapel" : "saveMapel";
+  const payload = id ? { id: id, nama: nama, jenis: jenis } : { nama: nama, jenis: jenis };
+
+  apiPost(aksi, payload).then(res => {
+    hideLoading();
+    if (res.status) {
+      Swal.fire("Berhasil", res.message, "success");
+      tutupFormMapel();
+      loadMapel().then(function () {
+        renderTabelMapel();
+        if (selectedCabang) { loadData(); terapkanFilterChecklist(); }
+      });
+    } else {
+      Swal.fire("Gagal", res.message, "error");
+    }
+  }).catch(() => hideLoading());
+}
+
+function hapusMapel(id, nama) {
+  Swal.fire({
+    title: "Hapus mapel '" + nama + "'?",
+    text: "Mapel ini akan dihapus dari daftar pilihan (berlaku untuk semua cabang). Data rangkuman materi yang sudah ada TIDAK ikut terhapus.",
+    icon: "warning", showCancelButton: true,
+    confirmButtonColor: "#dc3545", cancelButtonColor: "#555", confirmButtonText: "Ya, Hapus!"
+  }).then((result) => {
+    if (result.isConfirmed) {
+      showLoading();
+      apiPost("deleteMapel", { id: id }).then(res => {
+        hideLoading();
+        if (res.status) {
+          Swal.fire("Terhapus!", res.message, "success");
+          loadMapel().then(function () { renderTabelMapel(); if (selectedCabang) terapkanFilterChecklist(); });
+        } else {
+          Swal.fire("Gagal", res.message, "error");
+        }
+      });
+    }
+  });
+}
+
+// ================================================================
+// ====      KELOLA DATA TENTOR (CRUD, khusus Super Admin)       ====
+// ================================================================
+function renderTabelTentor() {
+  const tbody = document.getElementById("tbodyTentor");
+  if (!tbody) return;
+
+  if (!daftarTentor || daftarTentor.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="4">Belum ada data tentor. Klik "Tambah Tentor" untuk menambahkan.</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = "";
+  daftarTentor.forEach((t, i) => {
+    tbody.innerHTML += `<tr>
+      <td>${i + 1}</td>
+      <td style="text-align:left;font-weight:600;">${escapeHtml(t.nama)}</td>
+      <td><span class="badge badge-kelas">${escapeHtml(t.bidang)}</span></td>
+      <td>
+        <div class="action">
+          <button class="btn-warning" data-id="${escapeHtml(t.id)}"><i class="fa fa-edit"></i></button>
+          <button class="btn-delete" data-id="${escapeHtml(t.id)}" data-nama="${escapeHtml(t.nama)}"><i class="fa fa-trash"></i></button>
+        </div>
+      </td>
+    </tr>`;
+  });
+}
+
+function isiDatalistBidang() {
+  const dl = document.getElementById("bidangMapelList");
+  if (!dl) return;
+  const unik = [];
+  daftarTentor.forEach(t => { if (t.bidang && unik.indexOf(t.bidang) === -1) unik.push(t.bidang); });
+  dl.innerHTML = unik.map(b => `<option value="${escapeHtml(b)}">`).join("");
+}
+
+function bukaFormTambahTentor() {
+  document.getElementById("formTentorTitle").innerText = "Tambah Tentor";
+  document.getElementById("t_id").value = "";
+  document.getElementById("t_nama").value = "";
+  document.getElementById("t_bidang").value = "";
+  isiDatalistBidang();
+  document.getElementById("tentorModal").style.display = "flex";
+}
+function siapkanEditTentor(id) {
+  const item = daftarTentor.find(x => x.id === id);
+  if (!item) return;
+  document.getElementById("formTentorTitle").innerText = "Edit Tentor";
+  document.getElementById("t_id").value = item.id;
+  document.getElementById("t_nama").value = item.nama;
+  document.getElementById("t_bidang").value = item.bidang;
+  isiDatalistBidang();
+  document.getElementById("tentorModal").style.display = "flex";
+}
+function tutupFormTentor() { document.getElementById("tentorModal").style.display = "none"; }
+
+function simpanFormTentor() {
+  const id = document.getElementById("t_id").value;
+  const nama = document.getElementById("t_nama").value.trim();
+  const bidang = document.getElementById("t_bidang").value.trim();
+  if (!nama || !bidang) { Swal.fire("Oops", "Nama tentor dan Bidang/Mapel wajib diisi!", "warning"); return; }
+
+  showLoading();
+  const aksi = id ? "updateTentor" : "saveTentor";
+  const payload = id ? { id: id, nama: nama, bidangMapel: bidang } : { nama: nama, bidangMapel: bidang };
+
+  apiPost(aksi, payload).then(res => {
+    hideLoading();
+    if (res.status) {
+      Swal.fire("Berhasil", res.message, "success");
+      tutupFormTentor();
+      loadTentorList().then(function () { renderTabelTentor(); });
+    } else {
+      Swal.fire("Gagal", res.message, "error");
+    }
+  }).catch(() => hideLoading());
+}
+
+function hapusTentor(id, nama) {
+  Swal.fire({
+    title: "Hapus tentor '" + nama + "'?",
+    text: "Tentor ini akan dihapus dari daftar pilihan. Data rangkuman materi yang sudah ada TIDAK ikut terhapus.",
+    icon: "warning", showCancelButton: true,
+    confirmButtonColor: "#dc3545", cancelButtonColor: "#555", confirmButtonText: "Ya, Hapus!"
+  }).then((result) => {
+    if (result.isConfirmed) {
+      showLoading();
+      apiPost("deleteTentor", { id: id }).then(res => {
+        hideLoading();
+        if (res.status) {
+          Swal.fire("Terhapus!", res.message, "success");
+          loadTentorList().then(function () { renderTabelTentor(); });
+        } else {
+          Swal.fire("Gagal", res.message, "error");
+        }
+      });
+    }
+  });
+}
+
+function generateWarnaMapel(str) {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) hash = str.charCodeAt(i) + ((hash << 5) - hash);
+  const hue = Math.abs(hash) % 360;
+  return { bg: `hsl(${hue}, 85%, 92%)`, text: `hsl(${hue}, 90%, 25%)` };
+}
+
+// ================================================================
+// ====        DATA RANGKUMAN MATERI (PER CABANG)                ====
+// ================================================================
+function loadData() {
+  if (!selectedCabang) return Promise.resolve();
+  return fetch(CONFIG.API_URL + "?action=getDashboardData&cabang=" + encodeURIComponent(selectedCabang))
+    .then(res => res.json())
+    .then(res => {
+      semuaData = res || [];
+      terapkanFilter();
+    }).catch(() => {
+      const tbody = document.getElementById("tbody");
+      if (tbody) tbody.innerHTML = '<tr><td colspan="7">Gagal memuat data. Silakan muat ulang halaman.</td></tr>';
+    });
+}
+
+function terapkanFilter() {
+  const f_kelas = document.getElementById("kelas").value;
+  const f_mapel = document.getElementById("mapel").value;
+  const f_search = document.getElementById("search").value.toLowerCase();
+
+  dataTerfilter = semuaData.filter(d => {
+    const matchKelas = f_kelas === "" || d.kelas === f_kelas;
+    const matchMapel = f_mapel === "" || d.mapel.toUpperCase() === f_mapel.toUpperCase();
+    const matchSearch = d.materi.toLowerCase().includes(f_search) || d.tentor.toLowerCase().includes(f_search);
+    return matchKelas && matchMapel && matchSearch;
+  });
+
+  document.getElementById("jumlahMateri").innerText = dataTerfilter.length;
+  let totalHadir = 0;
+  let tentorSet = new Set();
+  dataTerfilter.forEach(x => {
+    totalHadir += parseInt(x.hadir || 0);
+    if (x.tentor) tentorSet.add(x.tentor);
+  });
+  document.getElementById("jumlahSiswa").innerText = totalHadir;
+  document.getElementById("jumlahTentor").innerText = tentorSet.size;
+
+  halamanAktif = 1;
+  renderTabel();
+}
+
+function resetHalamanDanFilter() { halamanAktif = 1; renderTabel(); }
+
+function renderTabel() {
+  const maxEntries = document.getElementById("maxEntries").value;
+
+  const thAdmin = document.querySelectorAll("th.kolom-admin");
+  thAdmin.forEach(el => el.style.display = loginStatus ? "table-cell" : "none");
+
+  const tbody = document.getElementById("tbody");
+
+  if (dataTerfilter.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="${loginStatus ? 8 : 7}">Tidak ada data ditemukan</td></tr>`;
+    updateKontrolPaginasi(0, 0, maxEntries);
+    return;
+  }
+
+  let dataYangDitampilkan = dataTerfilter;
+  let totalHalaman = 1;
+  let indexAwal = 0;
+
+  if (maxEntries !== "all") {
+    const limit = parseInt(maxEntries);
+    totalHalaman = Math.max(1, Math.ceil(dataTerfilter.length / limit));
+    if (halamanAktif > totalHalaman) halamanAktif = totalHalaman;
+    if (halamanAktif < 1) halamanAktif = 1;
+    indexAwal = (halamanAktif - 1) * limit;
+    dataYangDitampilkan = dataTerfilter.slice(indexAwal, indexAwal + limit);
+  } else {
+    halamanAktif = 1;
+  }
+
+  tbody.innerHTML = "";
+  dataYangDitampilkan.forEach((d, i) => {
+    const warna = generateWarnaMapel(d.mapel);
+    const nomorUrut = indexAwal + i + 1;
+
+    let row = `<tr>
+      <td data-label="No">${nomorUrut}</td>
+      <td data-label="Mapel"><span class="badge" style="background-color: ${warna.bg}; color: ${warna.text};">${escapeHtml(d.mapel)}</span></td>
+      <td data-label="Kelas"><span class="badge badge-kelas">${escapeHtml(d.kelas)}</span></td>
+      <td data-label="Hari, Tanggal">${escapeHtml(d.hari)}, ${escapeHtml(formatTanggalTampilan(d.tanggal))}</td>
+      <td data-label="Tentor"><b>${escapeHtml(d.tentor)}</b></td>
+      <td data-label="Materi" style="text-align:left;">${escapeHtml(d.materi)}</td>
+      <td data-label="Hadir">${escapeHtml(d.hadir)} Siswa</td>`;
+
+    if (loginStatus) {
+      row += `<td class="kolom-admin" data-label="Aksi">
+        <div class="action">
+          <button class="btn-warning" data-id="${escapeHtml(d.id)}"><i class="fa fa-edit"></i></button>
+          <button class="btn-delete" data-id="${escapeHtml(d.id)}"><i class="fa fa-trash"></i></button>
+        </div>
+      </td>`;
+    }
+    row += `</tr>`;
+    tbody.innerHTML += row;
+  });
+
+  updateKontrolPaginasi(totalHalaman, dataTerfilter.length, maxEntries);
+}
+
+function updateKontrolPaginasi(totalHalaman, totalData, maxEntries) {
+  const area = document.getElementById("paginationArea");
+  if (maxEntries === "all" || totalData === 0 || totalHalaman <= 1) { area.style.display = "none"; return; }
+  area.style.display = "flex";
+  document.getElementById("infoHalaman").innerText = `Menampilkan halaman ${halamanAktif} dari ${totalHalaman} (total ${totalData} data)`;
+  document.getElementById("indikatorHalaman").innerText = `${halamanAktif} / ${totalHalaman}`;
+  document.getElementById("btnPrev").disabled = (halamanAktif <= 1);
+  document.getElementById("btnNext").disabled = (halamanAktif >= totalHalaman);
+}
+
+function halamanSebelumnya() { if (halamanAktif > 1) { halamanAktif--; renderTabel(); scrollKeAtasTabel(); } }
+function halamanBerikutnya() { halamanAktif++; renderTabel(); scrollKeAtasTabel(); }
+function scrollKeAtasTabel() {
+  const tabel = document.getElementById("dataTable");
+  if (tabel) tabel.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function normalisasiTanggal(str) {
+  if (!str) return "";
+  const d = new Date(str);
+  if (!isNaN(d.getTime())) {
+    const y = d.getFullYear(), m = String(d.getMonth() + 1).padStart(2, "0"), day = String(d.getDate()).padStart(2, "0");
+    return `${y}-${m}-${day}`;
+  }
+  return String(str).trim();
+}
+function formatTanggalTampilan(str) {
+  if (!str) return "";
+  const d = new Date(str);
+  if (!isNaN(d.getTime())) {
+    const y = d.getFullYear(), m = String(d.getMonth() + 1).padStart(2, "0"), day = String(d.getDate()).padStart(2, "0");
+    return `${day}-${m}-${y}`;
+  }
+  return String(str).trim();
+}
+
+// ================================================================
+// ====        CHECKLIST PEMBAHASAN TRY OUT BULANAN            ====
+// ================================================================
+function isiFilterKelasChecklist() {
+  const selKelas = document.getElementById("cl_kelas");
+  selKelas.innerHTML = '<option value="" disabled selected>-- Pilih Kelas --</option>';
+  KELAS_TRYOUT_LIST.forEach(k => { selKelas.innerHTML += `<option value="${escapeHtml(k)}">${escapeHtml(k)}</option>`; });
+  chClKelas = segarkanSearchableSelect(chClKelas, "cl_kelas");
+}
+
+function isiFilterBulanTahunChecklist() {
+  const now = new Date();
+  const selBulan = document.getElementById("cl_bulan");
+  selBulan.innerHTML = BULAN_NAMA.map((nama, idx) => `<option value="${idx + 1}">${nama}</option>`).join("");
+  selBulan.value = now.getMonth() + 1;
+
+  const selTahun = document.getElementById("cl_tahun");
+  const tahunSekarang = now.getFullYear();
+  let daftarTahun = [];
+  for (let y = tahunSekarang - 2; y <= tahunSekarang + 1; y++) daftarTahun.push(y);
+  selTahun.innerHTML = daftarTahun.map(y => `<option value="${y}">${y}</option>`).join("");
+  selTahun.value = tahunSekarang;
+
+  isiFilterKelasChecklist();
+}
+
+function resetFilterChecklist() {
+  isiFilterBulanTahunChecklist();
+  kosongkanPilihanSelect(chClKelas, "cl_kelas");
+  terapkanFilterChecklist();
+}
+
+function aturTampilanJenisChecklist(kelasFilter) {
+  const selJenis = document.getElementById("cl_jenis");
+  const labelJenis = document.getElementById("cl_jenis_label");
+  if (!selJenis) return;
+  const tampilkan = KELAS_PERLU_JENIS.indexOf(kelasFilter) !== -1;
+  selJenis.style.display = tampilkan ? "inline-block" : "none";
+  if (labelJenis) labelJenis.style.display = tampilkan ? "inline" : "none";
+  if (!tampilkan) selJenis.value = "";
+}
+
+function terapkanFilterChecklist() {
+  if (!selectedCabang) return;
+  const selKelas = document.getElementById("cl_kelas");
+  const selBulan = document.getElementById("cl_bulan");
+  const selTahun = document.getElementById("cl_tahun");
+  const selJenis = document.getElementById("cl_jenis");
+  if (!selKelas || !selBulan || !selTahun || !selBulan.value || !selTahun.value) return;
+
+  const kelasFilter = selKelas.value;
+  const bulan = parseInt(selBulan.value);
+  const tahun = parseInt(selTahun.value);
+
+  aturTampilanJenisChecklist(kelasFilter);
+  const jenisFilter = (selJenis && selJenis.style.display !== "none") ? selJenis.value : "";
+
+  renderChecklistTryOut(bulan, tahun, kelasFilter, jenisFilter);
+}
+
+function cariInfoTryOut(kelasList, mapel, bulan, tahun, jenis) {
+  let ditemukan = null;
+  let tglDitemukanNorm = "";
+
+  semuaData.forEach(d => {
+    if (kelasList.indexOf(d.kelas) === -1) return;
+    if (String(d.mapel).trim().toUpperCase() !== mapel.toUpperCase()) return;
+    if (!cocokTryOutJenis(d.materi, jenis)) return;
+
+    const tglNorm = normalisasiTanggal(d.tanggal);
+    if (!tglNorm) return;
+    const bagian = tglNorm.split("-");
+    const y = parseInt(bagian[0]), m = parseInt(bagian[1]);
+    if (y !== tahun || m !== bulan) return;
+
+    if (!ditemukan || tglNorm > tglDitemukanNorm) { ditemukan = d; tglDitemukanNorm = tglNorm; }
+  });
+
+  return ditemukan;
+}
+
+function labelTagJenis(mapelItems, jenisFilter) {
+  if (jenisFilter) return "Mapel " + jenisFilter;
+  const jenisUnik = [];
+  mapelItems.forEach(mi => { if (jenisUnik.indexOf(mi.jenis) === -1) jenisUnik.push(mi.jenis); });
+  return jenisUnik.length === 1 ? ("Mapel " + jenisUnik[0]) : "TKA & UTBK";
+}
+
+function renderChecklistTryOut(bulan, tahun, kelasFilter, jenisFilter) {
+  const grid = document.getElementById("checklistGrid");
+  if (!grid) return;
+
+  if (!kelasFilter) {
+    grid.innerHTML = `
+      <div class="checklist-empty-state">
+        <i class="fa-solid fa-hand-pointer"></i>
+        Silakan pilih <b>Kelas</b> terlebih dahulu pada filter di atas untuk menampilkan checklist pembahasan Try Out Bulanan.
+      </div>`;
+    return;
+  }
+
+  const mapelItemsSemua = getMapelItemsUntukKelas(kelasFilter);
+  if (!mapelItemsSemua) {
+    grid.innerHTML = '<p>Tidak ada data ditemukan untuk filter yang dipilih.</p>';
+    return;
+  }
+
+  if (KELAS_PERLU_JENIS.indexOf(kelasFilter) !== -1 && !jenisFilter) {
+    grid.innerHTML = `
+      <div class="checklist-empty-state">
+        <i class="fa-solid fa-hand-pointer"></i>
+        Kelas <b>${escapeHtml(kelasFilter)}</b> memiliki mapel TKA &amp; UTBK. Silakan pilih <b>Jenis Mapel</b> (TKA atau UTBK) terlebih dahulu pada filter di atas untuk menampilkan checklist.
+      </div>`;
+    return;
+  }
+
+  let mapelItemsTampil = mapelItemsSemua;
+  if (jenisFilter) mapelItemsTampil = mapelItemsSemua.filter(mi => mi.jenis === jenisFilter);
+
+  if (mapelItemsTampil.length === 0) {
+    grid.innerHTML = `<div class="checklist-card">
+      <div class="checklist-card-header"><h4>${escapeHtml(kelasFilter)}</h4></div>
+      <p style="font-size:13px;color:#999;">Tidak ada mapel untuk filter jenis yang dipilih.</p>
+    </div>`;
+    return;
+  }
+
+  const kelasListPencarian = [kelasFilter];
+
+  let sudah = 0;
+  let itemsHtml = "";
+
+  mapelItemsTampil.forEach(mi => {
+    const info = cariInfoTryOut(kelasListPencarian, mi.mapel, bulan, tahun, mi.jenis);
+    if (info) sudah++;
+
+    const status = info
+      ? `<span class="checklist-status sudah"><i class="fa-solid fa-circle-check"></i> Sudah</span>`
+      : `<span class="checklist-status belum"><i class="fa-solid fa-circle-xmark"></i> Belum</span>`;
+
+    const infoTambahan = info
+      ? `<div class="checklist-item-info">${escapeHtml(formatTanggalTampilan(info.tanggal))} &bull; ${escapeHtml(info.tentor)}</div>`
+      : `<div class="checklist-item-info">Belum ada "Pembahasan Try Out ${escapeHtml(mi.jenis)} Bulan ..." bulan ini</div>`;
+
+    itemsHtml += `<div class="checklist-item">
+      <div>
+        <div class="checklist-item-nama">${escapeHtml(mi.mapel)}</div>
+        ${infoTambahan}
+      </div>
+      ${status}
+    </div>`;
+  });
+
+  const total = mapelItemsTampil.length;
+  const persen = total ? Math.round((sudah / total) * 100) : 0;
+
+  grid.innerHTML = `<div class="checklist-card">
+    <div class="checklist-card-header">
+      <h4>${escapeHtml(kelasFilter)}</h4>
+      <span class="checklist-jenis-tag">${escapeHtml(labelTagJenis(mapelItemsSemua, jenisFilter))}</span>
+    </div>
+    <div class="checklist-progress-bar"><div class="checklist-progress-fill" style="width:${persen}%;"></div></div>
+    <div class="checklist-progress-text">${sudah} dari ${total} mapel sudah dibahas (${persen}%)</div>
+    ${itemsHtml}
+  </div>`;
+}
+
+// ================================================================
+// ====   DATA MONITORING HARIAN JUMLAH SISWA (PER CABANG)       ====
+// ================================================================
+function isiFilterBulanTahun() {
+  const now = new Date();
+  const selBulan = document.getElementById("mon_bulan");
+  selBulan.innerHTML = BULAN_NAMA.map((nama, idx) => `<option value="${idx + 1}">${nama}</option>`).join("");
+  selBulan.value = now.getMonth() + 1;
+
+  const selTahun = document.getElementById("mon_tahun");
+  const tahunSekarang = now.getFullYear();
+  let daftarTahun = [];
+  for (let y = tahunSekarang - 2; y <= tahunSekarang + 1; y++) daftarTahun.push(y);
+  selTahun.innerHTML = daftarTahun.map(y => `<option value="${y}">${y}</option>`).join("");
+  selTahun.value = tahunSekarang;
+
+  chMonBulan = segarkanSearchableSelect(chMonBulan, "mon_bulan");
+  setPilihanSelect(chMonBulan, "mon_bulan", String(now.getMonth() + 1));
+  chMonTahun = segarkanSearchableSelect(chMonTahun, "mon_tahun");
+  setPilihanSelect(chMonTahun, "mon_tahun", String(tahunSekarang));
+}
+
+function resetFilterMonitoring() { isiFilterBulanTahun(); terapkanFilterMonitoring(); }
+
+function jumlahHariDalamBulan(tahun, bulan) { return new Date(tahun, bulan, 0).getDate(); }
+
+function terapkanFilterMonitoring() {
+  if (!selectedCabang) return;
+  const selBulan = document.getElementById("mon_bulan");
+  const selTahun = document.getElementById("mon_tahun");
+  if (!selBulan || !selTahun || !selBulan.value || !selTahun.value) return;
+
+  const bulan = parseInt(selBulan.value);
+  const tahun = parseInt(selTahun.value);
+  const totalHari = jumlahHariDalamBulan(tahun, bulan);
+
+  const JS_DAY_KE_NAMA = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+  const petaHari = {};
+  HARI_URUT.forEach(h => petaHari[h] = []);
+
+  for (let tgl = 1; tgl <= totalHari; tgl++) {
+    const d = new Date(tahun, bulan - 1, tgl);
+    const namaHari = JS_DAY_KE_NAMA[d.getDay()];
+    petaHari[namaHari].push(tgl);
+  }
+
+  const petaHadir = {};
+  semuaData.forEach(d => {
+    const tglNorm = normalisasiTanggal(d.tanggal);
+    if (!tglNorm) return;
+    const bagian = tglNorm.split("-");
+    const y = parseInt(bagian[0]), m = parseInt(bagian[1]);
+    if (y !== tahun || m !== bulan) return;
+
+    const key = String(d.kelas).trim().toUpperCase() + "|" + tglNorm;
+    const jumlah = parseInt(d.hadir) || 0;
+
+    if (!petaHadir[key]) petaHadir[key] = { total: 0, mapelList: [] };
+    petaHadir[key].total += jumlah;
+    if (d.mapel && petaHadir[key].mapelList.indexOf(d.mapel) === -1) petaHadir[key].mapelList.push(d.mapel);
+  });
+
+  loadRoster(bulan, tahun).then(function () {
+    renderTabelMonitoring(tahun, bulan, petaHari, petaHadir);
+  });
+}
+
+function loadRoster(bulan, tahun) {
+  return fetch(CONFIG.API_URL + "?action=getRosterKelas&bulan=" + bulan + "&tahun=" + tahun + "&cabang=" + encodeURIComponent(selectedCabang))
+    .then(res => res.json())
+    .then(res => {
+      rosterKelas = {};
+      (res || []).forEach(r => { rosterKelas[String(r.kelas).trim().toUpperCase()] = parseInt(r.jumlahSiswa) || 0; });
+    }).catch(() => {});
+}
+
+function simpanJumlahSiswa(kelas, nilai) {
+  if (!loginStatus || !selectedCabang) return;
+  const bulan = parseInt(document.getElementById("mon_bulan").value);
+  const tahun = parseInt(document.getElementById("mon_tahun").value);
+
+  showLoading();
+  apiPost("saveRosterKelas", { cabang: selectedCabang, kelas: kelas, jumlahSiswa: nilai, bulan: bulan, tahun: tahun }).then(res => {
+    hideLoading();
+    if (res.status) {
+      rosterKelas[kelas.toUpperCase()] = nilai;
+      terapkanFilterMonitoring();
+      terapkanFilterRekap();
+    } else {
+      Swal.fire("Gagal", res.message, "error");
+      terapkanFilterMonitoring();
+    }
+  }).catch(() => hideLoading());
+}
+
+function renderTabelMonitoring(tahun, bulan, petaHari, petaHadir) {
+  const thead = document.getElementById("theadMonitoring");
+  const tbody = document.getElementById("tbodyMonitoring");
+
+  let baris1 = `<tr>
+    <th rowspan="2">No</th>
+    <th rowspan="2" class="kolom-kelas-mon">Kelas</th>
+    <th rowspan="2">Jumlah<br>Siswa</th>`;
+  let baris2 = `<tr>`;
+
+  HARI_URUT.forEach(hari => {
+    const daftarTanggal = petaHari[hari];
+    baris1 += `<th colspan="${daftarTanggal.length || 1}">${hari}</th>`;
+    if (daftarTanggal.length === 0) { baris2 += `<th>-</th>`; }
+    else { daftarTanggal.forEach(tgl => { baris2 += `<th>${tgl}</th>`; }); }
+  });
+
+  baris1 += `<th rowspan="2" class="kolom-kelas-mon">Kelas</th><th rowspan="2">Jumlah<br>Siswa</th></tr>`;
+  baris2 += `</tr>`;
+
+  thead.innerHTML = baris1 + baris2;
+  tbody.innerHTML = "";
+
+  if (!KELAS_URUT || KELAS_URUT.length === 0) {
+    tbody.innerHTML = '<tr><td>Belum ada data kelas. Tambahkan kelas pada menu "Kelola Data Kelas" (khusus Super Admin).</td></tr>';
+    return;
+  }
+
+  let totalSeluruhSiswa = 0;
+  let totalKolomTengah = HARI_URUT.reduce((total, h) => total + (petaHari[h].length || 1), 0);
+
+  KELAS_URUT.forEach((kelas, idx) => {
+    const kelasKey = kelas.toUpperCase();
+    const jumlahSiswa = rosterKelas[kelasKey] !== undefined ? rosterKelas[kelasKey] : 0;
+    totalSeluruhSiswa += jumlahSiswa;
+
+    let baris = `<tr>
+      <td>${idx + 1}</td>
+      <td class="kolom-kelas-mon" style="text-align:left;font-weight:600;">${escapeHtml(kelas)}</td>
+      <td>${renderInputJumlahSiswa(kelas, jumlahSiswa)}</td>`;
+
+    HARI_URUT.forEach(hari => {
+      const daftarTanggal = petaHari[hari];
+      if (daftarTanggal.length === 0) { baris += `<td></td>`; }
+      else {
+        daftarTanggal.forEach(tgl => {
+          const tglStr = `${tahun}-${String(bulan).padStart(2, "0")}-${String(tgl).padStart(2, "0")}`;
+          const key = kelasKey + "|" + tglStr;
+          const info = petaHadir[key];
+          if (info && info.total) {
+            const badgeMapel = info.mapelList.map(m => {
+              const warna = generateWarnaMapel(m);
+              return `<span class="badge-mapel-kecil" style="background:${warna.bg};color:${warna.text};" title="${escapeHtml(m)}">${escapeHtml(singkatMapel(m))}</span>`;
+            }).join("");
+            baris += `<td class="sel-hadir">
+              <div class="angka-hadir">${info.total}</div>
+              <div class="mapel-hadir-wrap">${badgeMapel}</div>
+            </td>`;
+          } else { baris += `<td></td>`; }
+        });
+      }
+    });
+
+    baris += `<td class="kolom-kelas-mon" style="text-align:left;font-weight:600;">${escapeHtml(kelas)}</td>
+      <td>${jumlahSiswa || ""}</td>
+    </tr>`;
+
+    tbody.innerHTML += baris;
+  });
+
+  const trTotal = `<tr class="baris-total">
+    <td colspan="3" style="text-align:right;">TOTAL JUMLAH SISWA</td>
+    <td colspan="${totalKolomTengah}"></td>
+    <td></td>
+    <td>${totalSeluruhSiswa}</td>
+  </tr>`;
+  tbody.innerHTML += trTotal;
+}
+
+function renderInputJumlahSiswa(kelas, nilai) {
+  if (!loginStatus) return nilai || "";
+  return `<input type="number" min="0" class="input-jumlah-siswa" data-kelas="${escapeHtml(kelas)}" value="${nilai || 0}">`;
+}
+
+function isiHariOtomatis() {
+  const tglInput = document.getElementById("a_tanggal").value;
+  if (!tglInput) return;
+  const hariArr = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+  const d = new Date(tglInput);
+  document.getElementById("a_hari").value = hariArr[d.getDay()];
+}
+
+function simpanFormAdmin() {
+  if (!loginStatus || !selectedCabang) return;
+
+  const id = document.getElementById("a_id").value;
+  const kelas = document.getElementById("a_kelas").value;
+  const mapel = document.getElementById("a_mapel").value;
+  const tanggal = document.getElementById("a_tanggal").value;
+  const hari = document.getElementById("a_hari").value;
+  const tentor = document.getElementById("a_tentor").value;
+  const hadir = document.getElementById("a_hadir").value;
+  const materi = document.getElementById("a_materi").value;
+
+  if (!mapel || !tanggal || !tentor || !hadir || !materi) {
+    Swal.fire("Oops", "Mohon lengkapi semua isian formulir!", "warning");
+    return;
+  }
+
+  const payload = { cabang: selectedCabang, kelas, mapel: mapel.toUpperCase(), tanggal, hari, tentor, hadir, materi };
+  showLoading();
+
+  const aksi = id ? "updateData" : "saveData";
+  if (id) payload.id = id;
+
+  apiPost(aksi, payload).then(res => {
+    hideLoading();
+    if (res.status) {
+      Swal.fire("Berhasil", res.message, "success");
+      resetFormAdmin();
+      loadData().then(function () { terapkanFilterMonitoring(); terapkanFilterChecklist(); });
+      lihatBeranda();
+    } else {
+      Swal.fire("Gagal", res.message, "error");
+    }
+  });
+}
+
+function siapkanEdit(id) {
+  if (!loginStatus) return;
+
+  const item = semuaData.find(x => x.id === id);
+  if (!item) return;
+
+  document.getElementById("formAdminTitle").innerText = "Edit Data Rangkuman";
+  document.getElementById("a_id").value = item.id;
+  setPilihanSelect(chAKelas, "a_kelas", item.kelas);
+  setPilihanSelect(chAMapel, "a_mapel", item.mapel.toUpperCase());
+  document.getElementById("a_tanggal").value = item.tanggal;
+  document.getElementById("a_hari").value = item.hari;
+  setPilihanSelect(chATentor, "a_tentor", item.tentor);
+  document.getElementById("a_hadir").value = item.hadir;
+  document.getElementById("a_materi").value = item.materi;
+
+  document.getElementById("btnBatalEdit").style.display = "inline-block";
+  tampilkanAdminPanel();
+}
+
+function resetFormAdmin() {
+  document.getElementById("formAdminTitle").innerText = "Tambah Data Baru";
+  document.getElementById("a_id").value = "";
+  kosongkanPilihanSelect(chAMapel, "a_mapel");
+  document.getElementById("a_tanggal").value = "";
+  document.getElementById("a_hari").value = "";
+  kosongkanPilihanSelect(chATentor, "a_tentor");
+  document.getElementById("a_hadir").value = "";
+  document.getElementById("a_materi").value = "";
+  document.getElementById("btnBatalEdit").style.display = "none";
+}
+
+function hapusData(id) {
+  if (!loginStatus) return;
+
+  Swal.fire({
+    title: "Apakah Anda yakin?",
+    text: "Materi ini akan dihapus permanen!",
+    icon: "warning", showCancelButton: true,
+    confirmButtonColor: "#dc3545", cancelButtonColor: "#555", confirmButtonText: "Ya, Hapus!"
+  }).then((result) => {
+    if (result.isConfirmed) {
+      showLoading();
+      apiPost("deleteData", { id: id }).then(res => {
+        hideLoading();
+        if (res.status) {
+          Swal.fire("Terhapus!", res.message, "success");
+          loadData().then(function () { terapkanFilterMonitoring(); terapkanFilterChecklist(); });
+        } else {
+          Swal.fire("Gagal", res.message, "error");
+        }
+      });
+    }
+  });
+}
+
+// ================================================================
+// ====                  EKSPOR PDF (LOGO + TABEL)                ====
+// ================================================================
+let _logoBase64Cache = null;
+
+function ambilLogoBase64() {
+  if (_logoBase64Cache) return Promise.resolve(_logoBase64Cache);
+
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.crossOrigin = "Anonymous";
+    img.onload = function () {
+      try {
+        const canvas = document.createElement("canvas");
+        canvas.width = img.naturalWidth;
+        canvas.height = img.naturalHeight;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0);
+        _logoBase64Cache = canvas.toDataURL("image/png");
+        resolve(_logoBase64Cache);
+      } catch (e) { resolve(null); }
+    };
+    img.onerror = function () { resolve(null); };
+    img.src = "LOGO%20YK18.png";
+  });
+}
+
+function tambahKopPdf(doc, logoBase64, judul) {
+  const lebarHalaman = doc.internal.pageSize.getWidth();
+  const posisiXTeks = logoBase64 ? 92 : 40;
+
+  if (logoBase64) doc.addImage(logoBase64, "PNG", 40, 18, 42, 42);
+
+  doc.setFontSize(14);
+  doc.setTextColor(214, 0, 0);
+  doc.text("Neutron Murangan" + (selectedCabang ? " - " + selectedCabang : ""), posisiXTeks, 34);
+
+  doc.setFontSize(10);
+  doc.setTextColor(90, 90, 90);
+  doc.text("Sistem Informasi Rangkuman Materi Belajar", posisiXTeks, 48);
+
+  doc.setFontSize(11);
+  doc.setTextColor(30, 30, 30);
+  doc.text(judul, posisiXTeks, 62);
+
+  doc.setFontSize(9);
+  doc.setTextColor(120, 120, 120);
+  doc.text("Dicetak pada: " + new Date().toLocaleString("id-ID"), lebarHalaman - 40, 34, { align: "right" });
+
+  doc.setDrawColor(214, 0, 0);
+  doc.setLineWidth(1);
+  doc.line(40, 72, lebarHalaman - 40, 72);
+
+  return 85;
+}
+
+async function exportDataTablePdf() {
+  if (!dataTerfilter || dataTerfilter.length === 0) {
+    Swal.fire("Tidak Ada Data", "Tidak ada data untuk diekspor sesuai filter saat ini.", "info");
+    return;
+  }
+
+  showLoading();
+  try {
+    const logoBase64 = await ambilLogoBase64();
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ orientation: "landscape", unit: "pt", format: "a4" });
+
+    const startY = tambahKopPdf(doc, logoBase64, "Data Rangkuman Materi");
+
+    const kolom = ["No", "Mapel", "Kelas", "Hari, Tanggal", "Tentor", "Materi", "Hadir"];
+    const baris = dataTerfilter.map((d, i) => [
+      i + 1, d.mapel, d.kelas, `${d.hari}, ${formatTanggalTampilan(d.tanggal)}`, d.tentor, d.materi, d.hadir + " Siswa"
+    ]);
+
+    doc.autoTable({
+      head: [kolom], body: baris, startY: startY, theme: "grid",
+      styles: { fontSize: 8, cellPadding: 5, valign: "middle", overflow: "linebreak" },
+      headStyles: { fillColor: [214, 0, 0], textColor: 255, fontStyle: "bold" },
+      alternateRowStyles: { fillColor: [248, 248, 248] },
+      columnStyles: { 0: { cellWidth: 30, halign: "center" }, 5: { cellWidth: 260 }, 6: { cellWidth: 60, halign: "center" } },
+      margin: { left: 40, right: 40 }
+    });
+
+    doc.save("Rangkuman_Materi_" + selectedCabang + "_" + Date.now() + ".pdf");
+  } catch (e) {
+    Swal.fire("Gagal", "Terjadi kesalahan saat membuat PDF: " + e.toString(), "error");
+  } finally {
+    hideLoading();
+  }
+}
+
+async function exportMonitoringTablePdf() {
+  const tabelAsli = document.getElementById("monitoringTable");
+  if (!tabelAsli) return;
+
+  showLoading();
+  try {
+    const logoBase64 = await ambilLogoBase64();
+    const kanvas = await html2canvas(tabelAsli, { scale: 2, backgroundColor: "#ffffff", useCORS: true });
+
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ orientation: "landscape", unit: "pt", format: "a4" });
+
+    const namaBulan = BULAN_NAMA[parseInt(document.getElementById("mon_bulan").value) - 1];
+    const tahun = document.getElementById("mon_tahun").value;
+    const startY = tambahKopPdf(doc, logoBase64, "Data Monitoring Harian Jumlah Siswa - " + namaBulan + " " + tahun);
+
+    const lebarHalaman = doc.internal.pageSize.getWidth();
+    const tinggiHalaman = doc.internal.pageSize.getHeight();
+    const marginSisi = 40;
+    const lebarTersedia = lebarHalaman - (marginSisi * 2);
+
+    const rasio = kanvas.height / kanvas.width;
+    const lebarGambar = lebarTersedia;
+    const tinggiGambar = lebarGambar * rasio;
+    const tinggiMaksPerHalaman = tinggiHalaman - startY - 30;
+
+    if (tinggiGambar <= tinggiMaksPerHalaman) {
+      doc.addImage(kanvas.toDataURL("image/png"), "PNG", marginSisi, startY, lebarGambar, tinggiGambar);
+    } else {
+      const skalaPxPerPt = kanvas.width / lebarGambar;
+      const tinggiPxPerHalaman = Math.floor(tinggiMaksPerHalaman * skalaPxPerPt);
+      let posisiPxY = 0;
+      let halamanKe = 0;
+
+      while (posisiPxY < kanvas.height) {
+        const tinggiPotongPx = Math.min(tinggiPxPerHalaman, kanvas.height - posisiPxY);
+
+        const kanvasPotong = document.createElement("canvas");
+        kanvasPotong.width = kanvas.width;
+        kanvasPotong.height = tinggiPotongPx;
+        const ctxPotong = kanvasPotong.getContext("2d");
+        ctxPotong.drawImage(kanvas, 0, posisiPxY, kanvas.width, tinggiPotongPx, 0, 0, kanvas.width, tinggiPotongPx);
+        const gambarPotong = kanvasPotong.toDataURL("image/png");
+        const tinggiPotongPt = tinggiPotongPx / skalaPxPerPt;
+
+        if (halamanKe > 0) {
+          doc.addPage();
+          doc.setFontSize(9);
+          doc.setTextColor(120, 120, 120);
+          doc.text("Lanjutan Data Monitoring Harian Jumlah Siswa - " + namaBulan + " " + tahun, marginSisi, 30);
+          doc.addImage(gambarPotong, "PNG", marginSisi, 45, lebarGambar, tinggiPotongPt);
+        } else {
+          doc.addImage(gambarPotong, "PNG", marginSisi, startY, lebarGambar, tinggiPotongPt);
+        }
+
+        posisiPxY += tinggiPotongPx;
+        halamanKe++;
+      }
+    }
+
+    doc.save("Monitoring_Siswa_" + selectedCabang + "_" + namaBulan + "_" + tahun + "_" + Date.now() + ".pdf");
+  } catch (e) {
+    Swal.fire("Gagal", "Terjadi kesalahan saat membuat PDF: " + e.toString(), "error");
+  } finally {
+    hideLoading();
+  }
+}
+
+// ================================================================
+// ====        REKAP BULANAN JUMLAH SISWA (PER CABANG)           ====
+// ================================================================
+function isiFilterTahunRekap() {
+  const selTahun = document.getElementById("rekap_tahun");
+  if (!selTahun) return;
+  const tahunSekarang = new Date().getFullYear();
+  let daftarTahun = [];
+  for (let y = tahunSekarang - 2; y <= tahunSekarang + 1; y++) daftarTahun.push(y);
+  selTahun.innerHTML = daftarTahun.map(y => `<option value="${y}">${y}</option>`).join("");
+  selTahun.value = tahunSekarang;
+}
+
+function terapkanFilterRekap() {
+  if (!selectedCabang) return;
+  const selTahun = document.getElementById("rekap_tahun");
+  if (!selTahun || !selTahun.value) return;
+  loadRekapTahunan(parseInt(selTahun.value));
+}
+
+function loadRekapTahunan(tahun) {
+  return fetch(CONFIG.API_URL + "?action=getRosterRecapTahunan&tahun=" + tahun + "&cabang=" + encodeURIComponent(selectedCabang))
+    .then(res => res.json())
+    .then(res => { renderTabelRekap(res || []); }).catch(() => {
+      const tbody = document.getElementById("tbodyRekap");
+      if (tbody) tbody.innerHTML = '<tr><td>Gagal memuat data rekap. Silakan muat ulang halaman.</td></tr>';
+    });
+}
+
+function renderTabelRekap(dataRekap) {
+  const thead = document.getElementById("theadRekap");
+  const tbody = document.getElementById("tbodyRekap");
+  if (!thead || !tbody) return;
+
+  let headerHtml = `<tr><th>No</th><th class="kolom-kelas-rekap">Kelas</th>`;
+  BULAN_NAMA.forEach(nama => { headerHtml += `<th>${nama.substring(0, 3)}</th>`; });
+  headerHtml += `</tr>`;
+  thead.innerHTML = headerHtml;
+
+  if (!dataRekap || dataRekap.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="14">Belum ada data kelas. Tambahkan kelas pada menu "Kelola Data Kelas" (khusus Super Admin).</td></tr>';
+    return;
+  }
+
+  const totalPerBulan = new Array(12).fill(0);
+  let bodyHtml = "";
+
+  dataRekap.forEach((row, idx) => {
+    bodyHtml += `<tr>
+      <td>${idx + 1}</td>
+      <td class="kolom-kelas-rekap">${escapeHtml(row.kelas)}</td>`;
+
+    row.perBulan.forEach((nilai, i) => {
+      if (nilai === null || nilai === undefined) { bodyHtml += `<td class="rekap-kosong">-</td>`; }
+      else { totalPerBulan[i] += nilai; bodyHtml += `<td>${nilai}</td>`; }
+    });
+
+    bodyHtml += `</tr>`;
+  });
+
+  bodyHtml += `<tr class="baris-total"><td colspan="2" style="text-align:right;">TOTAL</td>`;
+  totalPerBulan.forEach(t => { bodyHtml += `<td>${t}</td>`; });
+  bodyHtml += `</tr>`;
+
+  tbody.innerHTML = bodyHtml;
+}
+
+async function exportRekapTablePdf() {
+  const selTahun = document.getElementById("rekap_tahun");
+  const tahun = selTahun ? selTahun.value : new Date().getFullYear();
+
+  showLoading();
+  try {
+    const dataRekap = await fetch(CONFIG.API_URL + "?action=getRosterRecapTahunan&tahun=" + tahun + "&cabang=" + encodeURIComponent(selectedCabang)).then(r => r.json());
+
+    if (!dataRekap || dataRekap.length === 0) {
+      hideLoading();
+      Swal.fire("Tidak Ada Data", "Belum ada data kelas untuk direkap.", "info");
+      return;
+    }
+
+    const logoBase64 = await ambilLogoBase64();
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ orientation: "landscape", unit: "pt", format: "a4" });
+
+    const startY = tambahKopPdf(doc, logoBase64, "Rekap Bulanan Jumlah Siswa - Tahun " + tahun);
+
+    const kolom = ["No", "Kelas"].concat(BULAN_NAMA.map(n => n.substring(0, 3)));
+    const totalPerBulan = new Array(12).fill(0);
+
+    const baris = dataRekap.map((row, i) => {
+      const nilaiTampil = row.perBulan.map((n, idx) => {
+        if (n === null || n === undefined) return "-";
+        totalPerBulan[idx] += n;
+        return n;
+      });
+      return [i + 1, row.kelas].concat(nilaiTampil);
+    });
+    baris.push(["", "TOTAL"].concat(totalPerBulan));
+
+    doc.autoTable({
+      head: [kolom], body: baris, startY: startY, theme: "grid",
+      styles: { fontSize: 8, cellPadding: 6, valign: "middle", halign: "center" },
+      headStyles: { fillColor: [214, 0, 0], textColor: 255, fontStyle: "bold" },
+      alternateRowStyles: { fillColor: [248, 248, 248] },
+      columnStyles: { 1: { halign: "left", cellWidth: 100 } },
+      margin: { left: 40, right: 40 },
+      didParseCell: function (data) {
+        if (data.row.index === baris.length - 1) {
+          data.cell.styles.fillColor = [243, 245, 249];
+          data.cell.styles.fontStyle = "bold";
+        }
+      }
+    });
+
+    doc.save("Rekap_Bulanan_Siswa_" + selectedCabang + "_" + tahun + "_" + Date.now() + ".pdf");
+  } catch (e) {
+    Swal.fire("Gagal", "Terjadi kesalahan saat membuat PDF: " + e.toString(), "error");
+  } finally {
+    hideLoading();
+  }
+}
+
+</script>
+</body>
+</html>
