@@ -1002,23 +1002,36 @@
   <div class="loader"></div>
 </div>
 
-<nav class="navbar">
-  <div class="logo-area">
+<nav style="display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:20px; padding:12px 20px;">
+
+  <!-- Logo -->
+  <div style="display:flex; align-items:center;">
     <div class="logo">
-     <img src="LOGO%20YK%2018.png" alt="Logo YK 18" style="width: 100%; height: auto; border-radius: 50%;">
+      <img src="LOGO%20YK%2018.png"
+           alt="Logo YK 18"
+           style="width:100%; height:auto; border-radius:70%;">
     </div>
-    <h2 style="text-align: center;">
-  Sistem Rangkuman Materi & Monitoring Jumlah Harian Siswa
-</h2>
   </div>
-  <div style="display:flex;gap:12px;align-items:center;">
+
+  <!-- Judul -->
+  <div style="text-align:center;">
+    <h2 style="margin:0; font-size:24px; font-weight:700;">
+      Sistem Rangkuman Materi & Monitoring Jumlah Harian Siswa
+    </h2>
+  </div>
+
+  <!-- Login -->
+  <div style="display:flex; gap:12px; align-items:center; justify-content:flex-end;">
     <span class="cabang-badge" id="cabangBadge" style="display:none;">
-      <i class="fa-solid fa-building"></i> <span id="cabangBadgeNama">-</span>
+      <i class="fa-solid fa-building"></i>
+      <span id="cabangBadgeNama">-</span>
     </span>
+
     <button class="login-btn" id="btnLoginLogout" onclick="openLogin()">
       <i class="fa fa-user-lock"></i> Login Admin
     </button>
   </div>
+
 </nav>
 <div id="navbarSpacer"></div>
 
